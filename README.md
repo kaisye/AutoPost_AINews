@@ -1,15 +1,40 @@
 # AI News Agent
 
-LangGraph workflow tu dong tim tin AI moi nhat, cham diem tin co tuong tac/anh huong cao, chon 1 bai tot nhat, viet bai phan tich chuyen sau cho Facebook, kem anh minh hoa neu bai goc co metadata anh, gui qua Telegram de duyet, va co the publish len Facebook Page sau khi approve.
+An end-to-end Agentic AI workflow that discovers high-impact AI news, ranks relevant articles, writes a deep Facebook analysis post, routes the draft through Telegram approval, prevents duplicate publishing, and optionally publishes to a Facebook Page.
 
-Mac dinh project dung NVIDIA NIM OpenAI-compatible API:
+The project is designed as a portfolio-grade Agentic AI system: it is not just a single LLM prompt. It combines workflow orchestration, external tools, memory, human approval, scheduling, UI configuration, and production-oriented safeguards.
+
+## Features
+
+- Multi-step LangGraph workflow.
+- AI news collection from RSS, Hacker News, Tavily, and NewsAPI.
+- Impact ranking based on recency, engagement, relevance, and novelty.
+- Deep Vietnamese Facebook post generation.
+- Optional article image metadata extraction for Facebook photo posts.
+- Telegram approval workflow with `APPROVE`, `REJECT`, and `EDIT` commands.
+- Auto-approval after a configurable timeout.
+- Optional Facebook Page publishing through the Facebook Graph API.
+- SQLite memory for article fingerprints, post history, feedback, and audit logs.
+- Duplicate prevention by canonical URL and content similarity.
+- Admin UI for running the workflow, scheduling posts, updating configuration, and viewing history.
+- Test suite and linting setup.
+
+## Default LLM Provider
+
+The default configuration uses NVIDIA NIM through an OpenAI-compatible API:
 
 - `LLM_PROVIDER=nvidia`
 - `OPENAI_BASE_URL=https://integrate.api.nvidia.com/v1`
 - `OPENAI_MODEL=openai/gpt-oss-120b`
 - `NVIDIA_API_KEY`
 
-Van co the quay lai OpenAI native bang cach dat `LLM_PROVIDER=openai`, them `OPENAI_API_KEY`, va doi `OPENAI_MODEL`.
+You can switch back to OpenAI native mode by setting:
+
+- `LLM_PROVIDER=openai`
+- `OPENAI_API_KEY`
+- `OPENAI_MODEL`
+
+Note: `openai/gpt-oss-120b` is a text model. It does not generate images directly. The current workflow uses image metadata from source articles when available.
 
 ## Architecture
 
@@ -18,91 +43,166 @@ flowchart LR
   A["Load Memory"] --> B["Collect News"]
   B --> C["Enrich Articles"]
   C --> D["Rank Impact"]
-  D --> E["Select Best Article"]
+  D --> E["Select Ranked Articles"]
   E --> F["Draft Deep Analysis Post"]
   F --> G["Check Duplicate"]
   G -->|fresh| H["Send Telegram Approval"]
   G -->|duplicate| K["Persist Run Memory"]
   H --> I["Wait Approval"]
-  I -->|approved| J["Optional Facebook Photo/Post Publish"]
-  I -->|rejected/edit| L["Store Feedback"]
+  I -->|approved| J["Optional Facebook Publish"]
+  I -->|rejected/edit| L["Store Feedback or Revise"]
   J --> K["Persist Run Memory"]
   L --> K
 ```
 
-## Memory layers
+## Memory Layers
 
-- `LangGraph checkpoint`: luu trang thai execution theo `thread_id`.
-- `SQLite domain memory`: luu article fingerprint, post history, Telegram feedback, publish status.
-- `Prompt memory`: dua cac post gan day vao prompt de tranh lap goc nhin.
+- `LangGraph checkpoint`: keeps execution state by `thread_id`.
+- `SQLite domain memory`: stores article fingerprints, post history, approval status, Telegram feedback, and Facebook post IDs.
+- `Prompt memory`: injects recent posts into the LLM prompt to reduce repeated angles and wording.
 
-## Duplicate prevention
+## Duplicate Prevention
 
-Workflow chong dang trung lap theo 3 lop:
+The workflow prevents duplicate publishing through three layers:
 
-- URL canonical: cac bai da tung nam trong post history se bi loai truoc khi draft, ke ca khi URL moi co them tracking query nhu `utm_source`.
-- Content similarity: sau khi LLM viet nhap, workflow so sanh voi 20 post gan nhat. Neu noi dung qua giong, run duoc luu voi status `skipped_duplicate` va khong gui Telegram/khong publish Facebook.
-- Prompt memory: cac post gan day van duoc dua vao prompt de giam lap lai goc nhin va cach dien dat.
+- Canonical URL filtering: previously posted source URLs are filtered before drafting, even when a new URL includes tracking parameters such as `utm_source`.
+- Content similarity check: after the LLM creates a draft, the workflow compares it with the 20 most recent posts. If it is too similar, the run is stored as `skipped_duplicate` and the post is not sent to Telegram or Facebook.
+- Prompt memory: recent posts are passed into the prompt so the model avoids repeating prior angles.
+
+## Requirements
+
+- Python 3.11+
+- Telegram bot token and approver chat ID
+- NVIDIA API key or OpenAI API key
+- Optional Facebook Page ID and Page Access Token
 
 ## Setup
 
-```bash
+```powershell
 python -m venv .venv
-.venv\Scripts\activate
+.\.venv\Scripts\activate
 pip install -e ".[dev]"
 copy .env.example .env
 ```
 
-Dien toi thieu:
+Fill in at least:
 
-- `NVIDIA_API_KEY`
-- `TELEGRAM_BOT_TOKEN`
-- `TELEGRAM_APPROVER_CHAT_ID`
+```env
+LLM_PROVIDER=nvidia
+NVIDIA_API_KEY=
+OPENAI_BASE_URL=https://integrate.api.nvidia.com/v1
+OPENAI_MODEL=openai/gpt-oss-120b
 
-## Run once
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_APPROVER_CHAT_ID=
+```
 
-```bash
+Optional Facebook publishing:
+
+```env
+FACEBOOK_ENABLED=true
+FACEBOOK_PAGE_ID=
+FACEBOOK_PAGE_ACCESS_TOKEN=
+```
+
+## Run Once
+
+```powershell
 ai-news-agent run-once
 ```
 
-## Run automation
+This runs the full workflow once:
 
-```bash
-ai-news-agent daemon
-```
+1. Collect AI news.
+2. Enrich article metadata.
+3. Rank impact.
+4. Select articles after ranking.
+5. Write a Facebook draft.
+6. Check duplicates.
+7. Send to Telegram for approval.
+8. Publish to Facebook if enabled and approved.
+9. Persist memory.
 
-`SCHEDULE_CRON` dung cron 5 truong. Vi du `0 8 * * *` chay 8:00 hang ngay theo timezone may chu.
+## Run the Admin UI
 
-## Admin UI
-
-```bash
+```powershell
 ai-news-agent ui
 ```
 
-Open `http://127.0.0.1:8787`.
+Open:
+
+```text
+http://127.0.0.1:8787
+```
 
 The UI supports:
 
-- Set daily posting time, which writes `SCHEDULE_CRON` in `.env`.
-- Run the workflow manually.
-- Change LLM provider/model/base URL.
-- Configure approval timeout, news lookback, max candidates.
-- Enable/disable Facebook publishing and update Page settings.
-- View current run status and recent post memory.
+- Manual workflow runs.
+- Daily posting schedule.
+- LLM provider/model/base URL configuration.
+- News lookback, candidate count, and selected article count.
+- Telegram approval timeout and auto-approval.
+- Facebook Page publishing settings.
+- Light/dark mode and theme color.
+- Run status and recent post memory.
 
-## Telegram approval
+## Run Automation
 
-Bot se gui ban nhap kem huong dan:
+```powershell
+ai-news-agent daemon
+```
 
-- Reply `APPROVE` de duyet.
-- Reply `REJECT: ly do` de tu choi.
-- Reply `EDIT: yeu cau chinh sua` de yeu cau workflow tu revise.
+`SCHEDULE_CRON` uses a standard 5-field cron expression. Example:
 
-Neu `FACEBOOK_ENABLED=true`, workflow se publish len Facebook Page sau khi `APPROVE`.
+```env
+SCHEDULE_CRON=25 3 * * *
+```
 
-## Test
+This runs every day at 03:25 according to the machine timezone.
 
-```bash
+Important: the scheduler only runs while the UI or daemon process is alive. For production, run it with a service manager such as Windows Task Scheduler, systemd, Docker, or a cloud worker.
+
+## Telegram Approval
+
+The bot sends a draft with instructions. Reply to the Telegram message with:
+
+- `APPROVE` to approve and continue.
+- `REJECT: reason` to reject and store feedback.
+- `EDIT: requested changes` to ask the workflow to revise the draft.
+
+If auto-approval is enabled and the timeout expires, the workflow treats the draft as approved.
+
+## Testing
+
+```powershell
 pytest
 ruff check .
 ```
+
+Current coverage focuses on:
+
+- LLM response parsing.
+- Scoring logic.
+- Telegram approval parsing.
+- Telegram timeout behavior.
+- Memory and duplicate prevention.
+
+## Key Files
+
+- `src/ai_news_agent/workflow.py`: LangGraph workflow.
+- `src/ai_news_agent/news.py`: news collection, enrichment, ranking.
+- `src/ai_news_agent/llm.py`: LLM post writer and revision logic.
+- `src/ai_news_agent/memory.py`: SQLite memory and duplicate checks.
+- `src/ai_news_agent/telegram.py`: Telegram approval client.
+- `src/ai_news_agent/facebook.py`: Facebook Page publisher.
+- `src/ai_news_agent/ui.py`: FastAPI admin UI.
+- `AGENTIC_AI_PORTFOLIO_REPORT.md`: detailed Vietnamese portfolio report.
+- `README_PORTFOLIO.md`: English portfolio overview.
+
+## Security Notes
+
+- Do not commit `.env`.
+- `.env.example` intentionally contains empty secret values.
+- Rotate Facebook Page tokens regularly.
+- Use least-privilege API credentials.
+- Keep approval enabled for sensitive or public-facing publishing workflows.
