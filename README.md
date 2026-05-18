@@ -2,6 +2,8 @@
 
 An end-to-end Agentic AI workflow that discovers high-impact AI news, ranks relevant articles, writes a deep Facebook analysis post, routes the draft through Telegram approval, prevents duplicate publishing, and optionally publishes to a Facebook Page.
 
+Vietnamese documentation: [README_VI.md](README_VI.md)
+
 The project is designed as a portfolio-grade Agentic AI system: it is not just a single LLM prompt. It combines workflow orchestration, external tools, memory, human approval, scheduling, UI configuration, and production-oriented safeguards.
 
 ## Features
