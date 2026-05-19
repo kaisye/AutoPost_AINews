@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import html
+import json
 import threading
 import uuid
 from dataclasses import dataclass
@@ -10,13 +11,15 @@ from typing import Annotated
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+from apscheduler.triggers.interval import IntervalTrigger
 from fastapi import FastAPI, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
 from openai import OpenAIError
 from pydantic import ValidationError
 
 from ai_news_agent.config import get_settings
-from ai_news_agent.llm import explain_openai_error
+from ai_news_agent.facebook import FacebookPublisher
+from ai_news_agent.llm import PostWriter, explain_openai_error
 from ai_news_agent.memory import AgentMemory
 from ai_news_agent.workflow import AINewsWorkflow
 
@@ -96,15 +99,24 @@ def dashboard() -> str:
 
 @app.post("/settings")
 def save_settings(
-    schedule_time: Annotated[str, Form()],
-    approval_timeout: Annotated[int, Form()],
+    schedule_mode: Annotated[str, Form()] = "cron",
+    schedule_time: Annotated[str, Form()] = "08:00",
+    interval_hours: Annotated[int, Form()] = 0,
+    interval_minutes: Annotated[int, Form()] = 0,
+    approval_timeout: Annotated[int, Form()] = 180,
     auto_approve_on_timeout: Annotated[str | None, Form()] = None,
     facebook_enabled: Annotated[str | None, Form()] = None,
     facebook_page_id: Annotated[str, Form()] = "",
     facebook_page_access_token: Annotated[str, Form()] = "",
     llm_provider: Annotated[str, Form()] = "nvidia",
+    openai_api_key: Annotated[str, Form()] = "",
+    nvidia_api_key: Annotated[str, Form()] = "",
     openai_model: Annotated[str, Form()] = "openai/gpt-oss-120b",
     openai_base_url: Annotated[str, Form()] = "https://integrate.api.nvidia.com/v1",
+    tavily_api_key: Annotated[str, Form()] = "",
+    newsapi_key: Annotated[str, Form()] = "",
+    telegram_bot_token: Annotated[str, Form()] = "",
+    telegram_approver_chat_id: Annotated[str, Form()] = "",
     news_lookback_hours: Annotated[int, Form()] = 36,
     news_max_candidates: Annotated[int, Form()] = 30,
     post_article_count: Annotated[int, Form()] = 1,
@@ -113,19 +125,30 @@ def save_settings(
         "LLM_PROVIDER": llm_provider,
         "OPENAI_MODEL": openai_model.strip(),
         "OPENAI_BASE_URL": openai_base_url.strip(),
+        "SCHEDULE_MODE": schedule_mode if schedule_mode in {"cron", "interval"} else "cron",
         "SCHEDULE_CRON": daily_time_to_cron(schedule_time),
+        "SCHEDULE_INTERVAL_HOURS": str(max(0, interval_hours)),
+        "SCHEDULE_INTERVAL_MINUTES": str(max(0, interval_minutes)),
         "TELEGRAM_APPROVAL_TIMEOUT_MINUTES": str(approval_timeout),
         "TELEGRAM_AUTO_APPROVE_ON_TIMEOUT": "true"
         if auto_approve_on_timeout == "true"
         else "false",
         "FACEBOOK_ENABLED": "true" if facebook_enabled == "true" else "false",
         "FACEBOOK_PAGE_ID": facebook_page_id.strip(),
+        "TELEGRAM_APPROVER_CHAT_ID": telegram_approver_chat_id.strip(),
         "NEWS_LOOKBACK_HOURS": str(news_lookback_hours),
         "NEWS_MAX_CANDIDATES": str(news_max_candidates),
         "POST_ARTICLE_COUNT": str(post_article_count),
     }
-    if facebook_page_access_token.strip():
-        updates["FACEBOOK_PAGE_ACCESS_TOKEN"] = facebook_page_access_token.strip()
+    secret_updates = {
+        "OPENAI_API_KEY": openai_api_key.strip(),
+        "NVIDIA_API_KEY": nvidia_api_key.strip(),
+        "TAVILY_API_KEY": tavily_api_key.strip(),
+        "NEWSAPI_KEY": newsapi_key.strip(),
+        "TELEGRAM_BOT_TOKEN": telegram_bot_token.strip(),
+        "FACEBOOK_PAGE_ACCESS_TOKEN": facebook_page_access_token.strip(),
+    }
+    updates.update({key: value for key, value in secret_updates.items() if value})
     write_env(updates)
     get_settings.cache_clear()
     reschedule_from_env()
@@ -153,6 +176,62 @@ def run_now() -> RedirectResponse:
     return RedirectResponse("/", status_code=303)
 
 
+@app.post("/repost")
+def repost_from_memory(
+    post_id: Annotated[int, Form()],
+    rewrite_instruction: Annotated[str, Form()] = "",
+    mode: Annotated[str, Form()] = "rewrite",
+) -> RedirectResponse:
+    try:
+        get_settings.cache_clear()
+        settings = get_settings()
+        if not settings.facebook_enabled:
+            RUN_STATUS.ok = False
+            RUN_STATUS.message = "Repost failed: Facebook publishing is disabled."
+            return RedirectResponse("/", status_code=303)
+
+        memory = AgentMemory(settings.database_path)
+        record = memory.post_record(post_id)
+        if not record:
+            RUN_STATUS.ok = False
+            RUN_STATUS.message = f"Repost failed: post #{post_id} was not found."
+            return RedirectResponse("/", status_code=303)
+
+        original_text = str(record["post_text"])
+        rewrite_instruction = rewrite_instruction.strip() if mode == "rewrite" else ""
+        post_text = (
+            PostWriter(settings).rewrite_saved_post(original_text, rewrite_instruction)
+            if rewrite_instruction
+            else original_text
+        )
+
+        facebook_post_id = FacebookPublisher(settings).publish_message(post_text)
+        try:
+            article_urls = json.loads(record["article_urls"] or "[]")
+        except json.JSONDecodeError:
+            article_urls = []
+        memory.remember_repost(
+            post_text=post_text,
+            article_urls=article_urls,
+            original_post_id=post_id,
+            facebook_post_id=facebook_post_id,
+            feedback=f"Rewritten and reposted from post #{post_id}: {rewrite_instruction}"
+            if rewrite_instruction
+            else None,
+        )
+        RUN_STATUS.ok = True
+        RUN_STATUS.finished_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        action = "Rewritten and reposted" if rewrite_instruction else "Reposted"
+        RUN_STATUS.message = f"{action} post #{post_id}. Facebook id: {facebook_post_id or 'not published'}"
+    except ValidationError as exc:
+        RUN_STATUS.ok = False
+        RUN_STATUS.message = "Repost configuration error: " + "; ".join(error["msg"] for error in exc.errors())
+    except Exception as exc:
+        RUN_STATUS.ok = False
+        RUN_STATUS.message = f"Repost failed: {exc}"
+    return RedirectResponse("/", status_code=303)
+
+
 def trigger_workflow(message: str) -> bool:
     with RUN_LOCK:
         if RUN_STATUS.running:
@@ -175,12 +254,15 @@ def scheduled_run() -> None:
 
 def reschedule_from_env() -> None:
     env = read_env()
-    cron = env.get("SCHEDULE_CRON", "0 8 * * *")
+    mode = env.get("SCHEDULE_MODE", "cron")
     if SCHEDULER.get_job(SCHEDULER_JOB_ID):
         SCHEDULER.remove_job(SCHEDULER_JOB_ID)
+    trigger = interval_trigger_from_env(env) if mode == "interval" else CronTrigger.from_crontab(
+        env.get("SCHEDULE_CRON", "0 8 * * *")
+    )
     SCHEDULER.add_job(
         scheduled_run,
-        trigger=CronTrigger.from_crontab(cron),
+        trigger=trigger,
         id=SCHEDULER_JOB_ID,
         replace_existing=True,
         max_instances=1,
@@ -256,6 +338,21 @@ def cron_to_daily_time(value: str | None) -> str:
     return "08:00"
 
 
+def int_or_default(value: str | None, default: int) -> int:
+    try:
+        return int(value or default)
+    except ValueError:
+        return default
+
+
+def interval_trigger_from_env(env: dict[str, str]) -> IntervalTrigger:
+    hours = max(0, int_or_default(env.get("SCHEDULE_INTERVAL_HOURS"), 0))
+    minutes = max(0, int_or_default(env.get("SCHEDULE_INTERVAL_MINUTES"), 0))
+    if hours == 0 and minutes == 0:
+        minutes = 1
+    return IntervalTrigger(hours=hours, minutes=minutes)
+
+
 def load_settings_or_none():
     try:
         get_settings.cache_clear()
@@ -266,6 +363,10 @@ def load_settings_or_none():
 
 def esc(value: object) -> str:
     return html.escape("" if value is None else str(value))
+
+
+def secret_placeholder(env: dict[str, str], key: str) -> str:
+    return "Configured - leave blank to keep" if env.get(key) else "Paste value"
 
 
 def banner(config_error: str | None) -> str:
@@ -292,10 +393,16 @@ def schedule_card(env: dict[str, str]) -> str:
         job = SCHEDULER.get_job(SCHEDULER_JOB_ID)
         if job and job.next_run_time:
             next_run = job.next_run_time.strftime("%Y-%m-%d %H:%M:%S %Z")
+    mode = env.get("SCHEDULE_MODE", "cron")
+    detail = (
+        f'every {esc(env.get("SCHEDULE_INTERVAL_HOURS", "0"))}h {esc(env.get("SCHEDULE_INTERVAL_MINUTES", "0"))}m'
+        if mode == "interval"
+        else esc(env.get("SCHEDULE_CRON", "0 8 * * *"))
+    )
     return f"""
     <div class="schedule-card">
       <span>Schedule</span>
-      <strong>{esc(env.get("SCHEDULE_CRON", "0 8 * * *"))}</strong>
+      <strong>{esc(mode)}: {detail}</strong>
       <span>Next run</span>
       <strong>{esc(next_run)}</strong>
     </div>
@@ -326,17 +433,33 @@ def theme_bar(env: dict[str, str]) -> str:
 
 def settings_form(env: dict[str, str]) -> str:
     schedule_time = cron_to_daily_time(env.get("SCHEDULE_CRON"))
+    schedule_mode = env.get("SCHEDULE_MODE", "cron")
     facebook_enabled = env.get("FACEBOOK_ENABLED", "false").lower() == "true"
     auto_approve = env.get("TELEGRAM_AUTO_APPROVE_ON_TIMEOUT", "true").lower() == "true"
-    token_set = bool(env.get("FACEBOOK_PAGE_ACCESS_TOKEN"))
+    nvidia_placeholder = secret_placeholder(env, "NVIDIA_API_KEY")
+    openai_placeholder = secret_placeholder(env, "OPENAI_API_KEY")
+    tavily_placeholder = secret_placeholder(env, "TAVILY_API_KEY")
+    newsapi_placeholder = secret_placeholder(env, "NEWSAPI_KEY")
+    telegram_placeholder = secret_placeholder(env, "TELEGRAM_BOT_TOKEN")
+    facebook_placeholder = secret_placeholder(env, "FACEBOOK_PAGE_ACCESS_TOKEN")
     return f"""
     <section class="panel">
       <p class="eyebrow">Configuration</p>
-      <h2>Schedule & Publishing</h2>
+      <h2>Schedule, Credentials & Publishing</h2>
       <form class="settings" method="post" action="/settings">
+        <div class="form-section">Schedule</div>
+        <label>Schedule mode
+          <select name="schedule_mode">
+            <option value="cron" {"selected" if schedule_mode == "cron" else ""}>Daily time</option>
+            <option value="interval" {"selected" if schedule_mode == "interval" else ""}>Every X hours/minutes</option>
+          </select>
+        </label>
         <label>Daily posting time<input name="schedule_time" type="time" value="{esc(schedule_time)}" required></label>
+        <label>Every hours<input name="interval_hours" type="number" min="0" max="168" value="{esc(env.get("SCHEDULE_INTERVAL_HOURS", "0"))}"></label>
+        <label>Every minutes<input name="interval_minutes" type="number" min="0" max="1440" value="{esc(env.get("SCHEDULE_INTERVAL_MINUTES", "0"))}"></label>
         <label>Telegram approval timeout (minutes)<input name="approval_timeout" type="number" min="1" max="1440" value="{esc(env.get("TELEGRAM_APPROVAL_TIMEOUT_MINUTES", "180"))}"></label>
         <label class="toggle"><input name="auto_approve_on_timeout" type="checkbox" value="true" {"checked" if auto_approve else ""}> Auto approve after timeout</label>
+        <div class="form-section">LLM</div>
         <label>LLM provider
           <select name="llm_provider">
             <option value="nvidia" {"selected" if env.get("LLM_PROVIDER", "nvidia") == "nvidia" else ""}>NVIDIA NIM</option>
@@ -345,19 +468,28 @@ def settings_form(env: dict[str, str]) -> str:
         </label>
         <label>Model<input name="openai_model" value="{esc(env.get("OPENAI_MODEL", "openai/gpt-oss-120b"))}"></label>
         <label>Base URL<input name="openai_base_url" value="{esc(env.get("OPENAI_BASE_URL", "https://integrate.api.nvidia.com/v1"))}"></label>
+        <label>NVIDIA API Key<input name="nvidia_api_key" type="password" placeholder="{esc(nvidia_placeholder)}"></label>
+        <label>OpenAI API Key<input name="openai_api_key" type="password" placeholder="{esc(openai_placeholder)}"></label>
+        <div class="form-section">News APIs</div>
         <label>News lookback hours<input name="news_lookback_hours" type="number" min="1" max="168" value="{esc(env.get("NEWS_LOOKBACK_HOURS", "36"))}"></label>
         <label>Max candidates<input name="news_max_candidates" type="number" min="3" max="100" value="{esc(env.get("NEWS_MAX_CANDIDATES", "30"))}"></label>
         <label>Articles after ranking<input name="post_article_count" type="number" min="1" max="10" value="{esc(env.get("POST_ARTICLE_COUNT", "1"))}"></label>
+        <label>Tavily API Key<input name="tavily_api_key" type="password" placeholder="{esc(tavily_placeholder)}"></label>
+        <label>NewsAPI Key<input name="newsapi_key" type="password" placeholder="{esc(newsapi_placeholder)}"></label>
+        <div class="form-section">Telegram</div>
+        <label>Telegram Bot Token<input name="telegram_bot_token" type="password" placeholder="{esc(telegram_placeholder)}"></label>
+        <label>Telegram Approver Chat ID<input name="telegram_approver_chat_id" value="{esc(env.get("TELEGRAM_APPROVER_CHAT_ID", ""))}"></label>
+        <div class="form-section">Facebook</div>
         <label class="toggle"><input name="facebook_enabled" type="checkbox" value="true" {"checked" if facebook_enabled else ""}> Enable Facebook publish after approval</label>
         <label>Facebook Page ID<input name="facebook_page_id" value="{esc(env.get("FACEBOOK_PAGE_ID", ""))}"></label>
-        <label>Facebook Page Access Token<input name="facebook_page_access_token" type="password" placeholder="{"Configured - leave blank to keep" if token_set else "Paste token"}"></label>
+        <label>Facebook Page Access Token<input name="facebook_page_access_token" type="password" placeholder="{esc(facebook_placeholder)}"></label>
         <button class="primary" type="submit">Save settings</button>
       </form>
     </section>
     """
 
 
-def history(records: list[dict[str, str | None]]) -> str:
+def history(records: list[dict]) -> str:
     if not records:
         rows = '<p class="empty">No posts stored yet.</p>'
     else:
@@ -365,11 +497,20 @@ def history(records: list[dict[str, str | None]]) -> str:
             f"""
             <article class="post">
               <div class="post-meta">
+                <span>#{esc(record.get("id"))}</span>
                 <span>{esc(record.get("created_at"))}</span>
                 <span>{esc(record.get("status"))}</span>
                 <span>{'Facebook: ' + esc(record.get("facebook_post_id")) if record.get("facebook_post_id") else 'Facebook: not published'}</span>
               </div>
               <p>{esc(record.get("post_text"))[:900]}</p>
+              <form method="post" action="/repost" class="post-actions">
+                <input type="hidden" name="post_id" value="{esc(record.get("id"))}">
+                <textarea name="rewrite_instruction" rows="2" placeholder="Rewrite instruction before reposting, e.g. make it sharper, less formal, more founder-focused"></textarea>
+                <div class="action-row">
+                  <button type="submit" name="mode" value="rewrite">Rewrite & repost</button>
+                  <button type="submit" name="mode" value="as_is">Repost as is</button>
+                </div>
+              </form>
             </article>
             """
             for record in records
@@ -522,6 +663,16 @@ def page(title: str, content: str) -> str:
           gap: 14px;
           margin-top: 16px;
         }}
+        .form-section {{
+          grid-column: 1 / -1;
+          margin-top: 8px;
+          padding-top: 12px;
+          border-top: 1px solid var(--border);
+          color: var(--text);
+          font-size: 14px;
+          font-weight: 700;
+        }}
+        .form-section:first-child {{ margin-top: 0; padding-top: 0; border-top: 0; }}
         input, select {{
           width: 100%;
           margin-top: 6px;
@@ -557,6 +708,29 @@ def page(title: str, content: str) -> str:
         .post {{ border: 1px solid var(--border); border-radius: 6px; padding: 14px; }}
         .post p {{ margin: 10px 0 0; white-space: pre-wrap; color: var(--post-text); }}
         .post-meta {{ display: flex; flex-wrap: wrap; gap: 10px; color: var(--muted); font-size: 12px; }}
+        .post-actions {{ margin-top: 12px; }}
+        .post-actions textarea {{
+          width: 100%;
+          min-height: 62px;
+          resize: vertical;
+          border: 1px solid var(--border);
+          border-radius: 6px;
+          padding: 10px 11px;
+          font: inherit;
+          color: var(--text);
+          background: var(--field-bg);
+        }}
+        .action-row {{ display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }}
+        .post-actions button {{
+          border: 1px solid var(--border);
+          border-radius: 6px;
+          padding: 8px 12px;
+          background: var(--field-bg);
+          color: var(--text);
+          font-weight: 700;
+          cursor: pointer;
+        }}
+        .post-actions button:hover {{ border-color: var(--accent); color: var(--accent); }}
         .empty {{ color: var(--muted); margin-bottom: 0; }}
         @media (max-width: 760px) {{
           main {{ width: min(100vw - 20px, 1180px); margin: 10px auto; }}

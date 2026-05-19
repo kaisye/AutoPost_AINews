@@ -123,11 +123,11 @@ class AgentMemory:
                 return True
         return False
 
-    def recent_post_records(self, limit: int = 10) -> list[dict[str, str | None]]:
+    def recent_post_records(self, limit: int = 10) -> list[dict]:
         with self._connect() as conn:
             rows = conn.execute(
                 """
-                select created_at, status, post_text, article_urls, approval_feedback, facebook_post_id
+                select id, created_at, status, post_text, article_urls, approval_feedback, facebook_post_id
                 from posts
                 order by created_at desc
                 limit ?
@@ -135,6 +135,18 @@ class AgentMemory:
                 (limit,),
             ).fetchall()
         return [dict(row) for row in rows]
+
+    def post_record(self, post_id: int) -> dict | None:
+        with self._connect() as conn:
+            row = conn.execute(
+                """
+                select id, created_at, status, post_text, article_urls, approval_feedback, facebook_post_id
+                from posts
+                where id = ?
+                """,
+                (post_id,),
+            ).fetchone()
+        return dict(row) if row else None
 
     def remember_post(
         self,
@@ -157,6 +169,32 @@ class AgentMemory:
                     draft.as_post(),
                     json.dumps([article.normalized_url for article in articles]),
                     approval.feedback,
+                    facebook_post_id,
+                ),
+            )
+
+    def remember_repost(
+        self,
+        post_text: str,
+        article_urls: list[str],
+        original_post_id: int,
+        facebook_post_id: str | None = None,
+        feedback: str | None = None,
+    ) -> None:
+        with self._connect() as conn:
+            conn.execute(
+                """
+                insert into posts (
+                    created_at, status, post_text, article_urls, approval_feedback, facebook_post_id
+                )
+                values (?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    datetime.now(timezone.utc).isoformat(),
+                    "approved",
+                    post_text,
+                    json.dumps(article_urls),
+                    feedback or f"Reposted from post #{original_post_id}",
                     facebook_post_id,
                 ),
             )

@@ -125,6 +125,12 @@ This runs the full workflow once:
 8. Publish to Facebook if enabled and approved.
 9. Persist memory.
 
+Quick Windows launcher:
+
+```text
+run_once.bat
+```
+
 ## Run the Admin UI
 
 ```powershell
@@ -142,11 +148,21 @@ The UI supports:
 - Manual workflow runs.
 - Daily posting schedule.
 - LLM provider/model/base URL configuration.
+- API key and token management for NVIDIA, OpenAI, Tavily, NewsAPI, Telegram, and Facebook.
 - News lookback, candidate count, and selected article count.
 - Telegram approval timeout and auto-approval.
 - Facebook Page publishing settings.
+- Reposting from recent post memory.
 - Light/dark mode and theme color.
 - Run status and recent post memory.
+
+Secret fields are password inputs. Leave a secret field blank to keep the existing value in `.env`.
+
+Quick Windows launcher:
+
+```text
+run_ui.bat
+```
 
 ## Run Automation
 
@@ -162,7 +178,48 @@ SCHEDULE_CRON=25 3 * * *
 
 This runs every day at 03:25 according to the machine timezone.
 
+You can also run on an interval instead of a fixed daily time:
+
+```env
+SCHEDULE_MODE=interval
+SCHEDULE_INTERVAL_HOURS=2
+SCHEDULE_INTERVAL_MINUTES=30
+```
+
+This runs every 2 hours and 30 minutes. Use `SCHEDULE_MODE=cron` to return to the daily/cron schedule.
+
 Important: the scheduler only runs while the UI or daemon process is alive. For production, run it with a service manager such as Windows Task Scheduler, systemd, Docker, or a cloud worker.
+
+Quick Windows launcher:
+
+```text
+run_daemon.bat
+```
+
+Keep the daemon window open. Closing it stops the scheduled automation.
+
+## Repost from Memory
+
+You can repost a previous memory item from the Admin UI. Each recent post has:
+
+- `Rewrite & repost`: enter a rewrite instruction and let the model rewrite the post before publishing.
+- `Repost as is`: publish the stored post text unchanged.
+
+Facebook publishing must be enabled.
+
+You can also repost from the CLI:
+
+```powershell
+ai-news-agent repost --post-id 3
+```
+
+To rewrite before reposting:
+
+```powershell
+ai-news-agent repost --post-id 3 --rewrite "Make it sharper, less formal, and more founder-focused"
+```
+
+The repost is written back to SQLite memory with feedback such as `Reposted from post #3`, so the audit trail remains clear.
 
 ## Telegram Approval
 

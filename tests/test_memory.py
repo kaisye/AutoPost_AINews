@@ -26,3 +26,20 @@ def test_similar_post_is_duplicate(tmp_path: Path) -> None:
     memory.remember_post(draft, [article], ApprovalResult(status=ApprovalStatus.APPROVED))
 
     assert memory.is_duplicate_post(draft)
+
+
+def test_repost_is_stored_with_original_reference(tmp_path: Path) -> None:
+    memory = AgentMemory(tmp_path / "memory.sqlite3")
+
+    memory.remember_repost(
+        post_text="Original post",
+        article_urls=["https://example.com/a"],
+        original_post_id=7,
+        facebook_post_id="fb_123",
+    )
+
+    record = memory.recent_post_records(limit=1)[0]
+    assert record["status"] == "approved"
+    assert record["post_text"] == "Original post"
+    assert record["approval_feedback"] == "Reposted from post #7"
+    assert record["facebook_post_id"] == "fb_123"

@@ -124,6 +124,12 @@ Lệnh này sẽ chạy toàn bộ workflow:
 8. Publish Facebook nếu được bật và approved.
 9. Lưu memory.
 
+File chạy nhanh trên Windows:
+
+```text
+run_once.bat
+```
+
 ## Chạy Admin UI
 
 ```powershell
@@ -141,11 +147,21 @@ UI hỗ trợ:
 - Chạy workflow thủ công.
 - Đặt giờ đăng bài hằng ngày.
 - Cấu hình LLM provider, model và base URL.
+- Nhập/cập nhật API key và token cho NVIDIA, OpenAI, Tavily, NewsAPI, Telegram và Facebook.
 - Cấu hình lookback, số lượng candidate, số bài sau ranking.
 - Cấu hình Telegram approval timeout và auto approve.
 - Cấu hình Facebook Page publishing.
+- Đăng lại bài từ lịch sử memory.
 - Chọn light/dark mode và theme color.
 - Xem trạng thái run và lịch sử post.
+
+Các trường secret dùng password input. Để trống nếu muốn giữ nguyên giá trị cũ trong `.env`.
+
+File chạy nhanh trên Windows:
+
+```text
+run_ui.bat
+```
 
 ## Chạy automation
 
@@ -161,7 +177,48 @@ SCHEDULE_CRON=25 3 * * *
 
 Nghĩa là chạy mỗi ngày lúc 03:25 theo timezone của máy đang chạy.
 
+Bạn cũng có thể chạy theo interval thay vì giờ cố định:
+
+```env
+SCHEDULE_MODE=interval
+SCHEDULE_INTERVAL_HOURS=2
+SCHEDULE_INTERVAL_MINUTES=30
+```
+
+Nghĩa là chạy mỗi 2 giờ 30 phút. Đặt `SCHEDULE_MODE=cron` để quay lại lịch hằng ngày/cron.
+
 Lưu ý: scheduler chỉ chạy khi process UI hoặc daemon còn sống. Nếu đóng terminal/process thì automation sẽ dừng. Khi production nên dùng Windows Task Scheduler, systemd, Docker hoặc cloud worker.
+
+File chạy nhanh trên Windows:
+
+```text
+run_daemon.bat
+```
+
+Cần giữ cửa sổ daemon mở. Nếu đóng cửa sổ này thì automation theo lịch sẽ dừng.
+
+## Đăng lại bài từ memory
+
+Bạn có thể đăng lại bài cũ trong Admin UI. Mỗi bài ở phần Recent Posts có:
+
+- `Rewrite & repost`: nhập yêu cầu chỉnh sửa, model sẽ viết lại bài rồi mới đăng.
+- `Repost as is`: đăng lại nguyên văn nội dung đã lưu.
+
+Facebook publishing cần được bật trước.
+
+Cũng có thể dùng CLI:
+
+```powershell
+ai-news-agent repost --post-id 3
+```
+
+Nếu muốn model viết lại trước khi repost:
+
+```powershell
+ai-news-agent repost --post-id 3 --rewrite "Viết sắc hơn, bớt trang trọng, tập trung vào góc nhìn founder"
+```
+
+Mỗi lần repost sẽ được ghi lại vào SQLite memory với feedback như `Reposted from post #3`, nên audit trail vẫn rõ ràng.
 
 ## Telegram approval
 

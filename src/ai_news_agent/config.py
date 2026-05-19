@@ -44,7 +44,10 @@ class Settings(BaseSettings):
     facebook_page_access_token: str | None = Field(None, alias="FACEBOOK_PAGE_ACCESS_TOKEN")
 
     run_mode: str = Field("once", alias="RUN_MODE")
+    schedule_mode: str = Field("cron", alias="SCHEDULE_MODE")
     schedule_cron: str = Field("0 8 * * *", alias="SCHEDULE_CRON")
+    schedule_interval_hours: int = Field(0, alias="SCHEDULE_INTERVAL_HOURS")
+    schedule_interval_minutes: int = Field(0, alias="SCHEDULE_INTERVAL_MINUTES")
     ui_theme_mode: str = Field("light", alias="UI_THEME_MODE")
     ui_theme_color: str = Field("#1264a3", alias="UI_THEME_COLOR")
 
@@ -75,6 +78,15 @@ class Settings(BaseSettings):
             raise ValueError("OPENAI_API_KEY is required when LLM_PROVIDER=openai")
         if provider not in {"nvidia", "openai"}:
             raise ValueError("LLM_PROVIDER must be either 'nvidia' or 'openai'")
+        self.schedule_mode = self.schedule_mode.strip().lower()
+        if self.schedule_mode not in {"cron", "interval"}:
+            raise ValueError("SCHEDULE_MODE must be either 'cron' or 'interval'")
+        if self.schedule_interval_hours < 0 or self.schedule_interval_minutes < 0:
+            raise ValueError("Schedule interval hours/minutes cannot be negative")
+        if self.schedule_mode == "interval":
+            total_minutes = self.schedule_interval_hours * 60 + self.schedule_interval_minutes
+            if total_minutes <= 0:
+                raise ValueError("Interval schedule requires SCHEDULE_INTERVAL_HOURS or SCHEDULE_INTERVAL_MINUTES")
         return self
 
     @property
