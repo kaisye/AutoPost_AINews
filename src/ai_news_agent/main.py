@@ -81,7 +81,8 @@ def repost(post_id: int, rewrite_instruction: str | None = None) -> None:
         if rewrite_instruction
         else original_text
     )
-    facebook_post_id = FacebookPublisher(settings).publish_message(post_text)
+    image_url = str(record["image_url"]) if record.get("image_url") else None
+    facebook_post_id = FacebookPublisher(settings).publish_message(post_text, image_url=image_url)
     try:
         article_urls = json.loads(record["article_urls"] or "[]")
     except json.JSONDecodeError:
@@ -91,6 +92,7 @@ def repost(post_id: int, rewrite_instruction: str | None = None) -> None:
         article_urls=article_urls,
         original_post_id=post_id,
         facebook_post_id=facebook_post_id,
+        image_url=image_url,
         feedback=f"Rewritten and reposted from post #{post_id}: {rewrite_instruction}"
         if rewrite_instruction
         else None,

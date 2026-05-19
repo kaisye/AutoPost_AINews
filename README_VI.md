@@ -205,6 +205,7 @@ Bạn có thể đăng lại bài cũ trong Admin UI. Mỗi bài ở phần Rece
 - `Repost as is`: đăng lại nguyên văn nội dung đã lưu.
 
 Facebook publishing cần được bật trước.
+Nếu bài gốc đã được lưu với `image_url`, repost sẽ đăng lại kèm hình ảnh đó.
 
 Cũng có thể dùng CLI:
 
@@ -218,7 +219,7 @@ Nếu muốn model viết lại trước khi repost:
 ai-news-agent repost --post-id 3 --rewrite "Viết sắc hơn, bớt trang trọng, tập trung vào góc nhìn founder"
 ```
 
-Mỗi lần repost sẽ được ghi lại vào SQLite memory với feedback như `Reposted from post #3`, nên audit trail vẫn rõ ràng.
+Mỗi lần repost sẽ được ghi lại vào SQLite memory với feedback như `Reposted from post #3`, kèm `image_url` nếu có, nên audit trail vẫn rõ ràng.
 
 ## Telegram approval
 

@@ -41,11 +41,19 @@ class AgentMemory:
                     status text not null,
                     post_text text not null,
                     article_urls text not null,
+                    image_url text,
                     approval_feedback text,
                     facebook_post_id text
                 );
                 """
             )
+            self._ensure_column(conn, "posts", "image_url", "text")
+
+    @staticmethod
+    def _ensure_column(conn: sqlite3.Connection, table: str, column: str, definition: str) -> None:
+        columns = {row["name"] for row in conn.execute(f"pragma table_info({table})").fetchall()}
+        if column not in columns:
+            conn.execute(f"alter table {table} add column {column} {definition}")
 
     @staticmethod
     def canonical_url(url: str) -> str:
@@ -127,7 +135,7 @@ class AgentMemory:
         with self._connect() as conn:
             rows = conn.execute(
                 """
-                select id, created_at, status, post_text, article_urls, approval_feedback, facebook_post_id
+                select id, created_at, status, post_text, article_urls, image_url, approval_feedback, facebook_post_id
                 from posts
                 order by created_at desc
                 limit ?
@@ -140,7 +148,7 @@ class AgentMemory:
         with self._connect() as conn:
             row = conn.execute(
                 """
-                select id, created_at, status, post_text, article_urls, approval_feedback, facebook_post_id
+                select id, created_at, status, post_text, article_urls, image_url, approval_feedback, facebook_post_id
                 from posts
                 where id = ?
                 """,
@@ -159,15 +167,16 @@ class AgentMemory:
             conn.execute(
                 """
                 insert into posts (
-                    created_at, status, post_text, article_urls, approval_feedback, facebook_post_id
+                    created_at, status, post_text, article_urls, image_url, approval_feedback, facebook_post_id
                 )
-                values (?, ?, ?, ?, ?, ?)
+                values (?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     datetime.now(timezone.utc).isoformat(),
                     approval.status.value,
                     draft.as_post(),
                     json.dumps([article.normalized_url for article in articles]),
+                    str(draft.image_url) if draft.image_url else None,
                     approval.feedback,
                     facebook_post_id,
                 ),
@@ -180,20 +189,22 @@ class AgentMemory:
         original_post_id: int,
         facebook_post_id: str | None = None,
         feedback: str | None = None,
+        image_url: str | None = None,
     ) -> None:
         with self._connect() as conn:
             conn.execute(
                 """
                 insert into posts (
-                    created_at, status, post_text, article_urls, approval_feedback, facebook_post_id
+                    created_at, status, post_text, article_urls, image_url, approval_feedback, facebook_post_id
                 )
-                values (?, ?, ?, ?, ?, ?)
+                values (?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     datetime.now(timezone.utc).isoformat(),
                     "approved",
                     post_text,
                     json.dumps(article_urls),
+                    image_url,
                     feedback or f"Reposted from post #{original_post_id}",
                     facebook_post_id,
                 ),

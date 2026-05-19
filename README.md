@@ -206,6 +206,7 @@ You can repost a previous memory item from the Admin UI. Each recent post has:
 - `Repost as is`: publish the stored post text unchanged.
 
 Facebook publishing must be enabled.
+If the original post was stored with an image URL, reposting will publish with that image again.
 
 You can also repost from the CLI:
 
@@ -219,7 +220,7 @@ To rewrite before reposting:
 ai-news-agent repost --post-id 3 --rewrite "Make it sharper, less formal, and more founder-focused"
 ```
 
-The repost is written back to SQLite memory with feedback such as `Reposted from post #3`, so the audit trail remains clear.
+The repost is written back to SQLite memory with feedback such as `Reposted from post #3`, including the stored image URL when available, so the audit trail remains clear.
 
 ## Telegram Approval
 

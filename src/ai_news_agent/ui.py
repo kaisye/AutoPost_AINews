@@ -205,7 +205,8 @@ def repost_from_memory(
             else original_text
         )
 
-        facebook_post_id = FacebookPublisher(settings).publish_message(post_text)
+        image_url = str(record["image_url"]) if record.get("image_url") else None
+        facebook_post_id = FacebookPublisher(settings).publish_message(post_text, image_url=image_url)
         try:
             article_urls = json.loads(record["article_urls"] or "[]")
         except json.JSONDecodeError:
@@ -215,6 +216,7 @@ def repost_from_memory(
             article_urls=article_urls,
             original_post_id=post_id,
             facebook_post_id=facebook_post_id,
+            image_url=image_url,
             feedback=f"Rewritten and reposted from post #{post_id}: {rewrite_instruction}"
             if rewrite_instruction
             else None,
@@ -501,6 +503,7 @@ def history(records: list[dict]) -> str:
                 <span>{esc(record.get("created_at"))}</span>
                 <span>{esc(record.get("status"))}</span>
                 <span>{'Facebook: ' + esc(record.get("facebook_post_id")) if record.get("facebook_post_id") else 'Facebook: not published'}</span>
+                <span>{'Image: yes' if record.get("image_url") else 'Image: no'}</span>
               </div>
               <p>{esc(record.get("post_text"))[:900]}</p>
               <form method="post" action="/repost" class="post-actions">
