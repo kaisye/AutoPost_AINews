@@ -75,24 +75,41 @@ def dashboard() -> str:
         title="AI News Agent",
         content=f"""
         {banner(config_error)}
-        {theme_bar(env)}
-        <section class="panel">
-          <div class="panel-title">
-            <div>
-              <p class="eyebrow">Operations</p>
-              <h1>Publishing Console</h1>
-            </div>
+        <div class="topbar">
+          <div>
+            <p class="eyebrow">AI News Agent</p>
+            <h1>Publishing Console</h1>
+          </div>
+          <div class="top-actions">
+            {theme_bar(env)}
             <form method="post" action="/run">
               <button class="primary" type="submit" {"disabled" if RUN_STATUS.running else ""}>
                 {"Running..." if RUN_STATUS.running else "Run now"}
               </button>
             </form>
           </div>
-          {status_card()}
-          {schedule_card(env)}
-        </section>
-        {settings_form(env)}
-        {history(records)}
+        </div>
+        <div class="app-grid">
+          <aside class="sidebar">
+            <a href="#overview">Overview</a>
+            <a href="#settings">Settings</a>
+            <a href="#memory">Memory</a>
+          </aside>
+          <div class="workspace">
+            <section id="overview" class="section">
+              <div class="section-head">
+                <div>
+                  <p class="eyebrow">Operations</p>
+                  <h2>Run Status</h2>
+                </div>
+              </div>
+              {status_card()}
+              {schedule_card(env)}
+            </section>
+            {settings_form(env)}
+            {history(records)}
+          </div>
+        </div>
         """,
     )
 
@@ -415,11 +432,7 @@ def theme_bar(env: dict[str, str]) -> str:
     mode = env.get("UI_THEME_MODE", "light")
     color = normalize_color(env.get("UI_THEME_COLOR", "#1264a3"))
     return f"""
-    <section class="themebar">
-      <div>
-        <p class="eyebrow">Appearance</p>
-        <strong>Theme</strong>
-      </div>
+    <div class="themebar" aria-label="Appearance controls">
       <form method="post" action="/theme" class="theme-controls">
         <input type="hidden" name="ui_theme_color" value="{esc(color)}">
         <button class="seg {"active" if mode == "light" else ""}" name="ui_theme_mode" value="light" type="submit">Light</button>
@@ -429,7 +442,7 @@ def theme_bar(env: dict[str, str]) -> str:
         <input type="hidden" name="ui_theme_mode" value="{esc(mode)}">
         <input aria-label="Theme color" name="ui_theme_color" type="color" value="{esc(color)}" onchange="this.form.submit()">
       </form>
-    </section>
+    </div>
     """
 
 
@@ -445,9 +458,13 @@ def settings_form(env: dict[str, str]) -> str:
     telegram_placeholder = secret_placeholder(env, "TELEGRAM_BOT_TOKEN")
     facebook_placeholder = secret_placeholder(env, "FACEBOOK_PAGE_ACCESS_TOKEN")
     return f"""
-    <section class="panel">
-      <p class="eyebrow">Configuration</p>
-      <h2>Schedule, Credentials & Publishing</h2>
+    <section id="settings" class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Configuration</p>
+          <h2>Schedule, Credentials & Publishing</h2>
+        </div>
+      </div>
       <form class="settings" method="post" action="/settings">
         <div class="form-section">Schedule</div>
         <label>Schedule mode
@@ -497,34 +514,60 @@ def history(records: list[dict]) -> str:
     else:
         rows = "".join(
             f"""
-            <article class="post">
-              <div class="post-meta">
-                <span>#{esc(record.get("id"))}</span>
-                <span>{esc(record.get("created_at"))}</span>
-                <span>{esc(record.get("status"))}</span>
-                <span>{'Facebook: ' + esc(record.get("facebook_post_id")) if record.get("facebook_post_id") else 'Facebook: not published'}</span>
-                <span>{'Image: yes' if record.get("image_url") else 'Image: no'}</span>
+            <details class="post">
+              <summary>
+                {post_thumb(record)}
+                <span class="post-summary">
+                  <span class="post-title">{esc(compact_post_title(record.get("post_text")))}</span>
+                  <span class="post-meta">
+                    <span>#{esc(record.get("id"))}</span>
+                    <span>{esc(record.get("created_at"))}</span>
+                    <span>{esc(record.get("status"))}</span>
+                    <span>{'Facebook: ' + esc(record.get("facebook_post_id")) if record.get("facebook_post_id") else 'Facebook: not published'}</span>
+                  </span>
+                </span>
+                <span class="expand-label">Open</span>
+              </summary>
+              <div class="post-detail">
+                <p>{esc(record.get("post_text"))}</p>
+                <form method="post" action="/repost" class="post-actions">
+                  <input type="hidden" name="post_id" value="{esc(record.get("id"))}">
+                  <textarea name="rewrite_instruction" rows="2" placeholder="Rewrite instruction before reposting, e.g. make it sharper, less formal, more founder-focused"></textarea>
+                  <div class="action-row">
+                    <button type="submit" name="mode" value="rewrite">Rewrite & repost</button>
+                    <button type="submit" name="mode" value="as_is">Repost as is</button>
+                  </div>
+                </form>
               </div>
-              <p>{esc(record.get("post_text"))[:900]}</p>
-              <form method="post" action="/repost" class="post-actions">
-                <input type="hidden" name="post_id" value="{esc(record.get("id"))}">
-                <textarea name="rewrite_instruction" rows="2" placeholder="Rewrite instruction before reposting, e.g. make it sharper, less formal, more founder-focused"></textarea>
-                <div class="action-row">
-                  <button type="submit" name="mode" value="rewrite">Rewrite & repost</button>
-                  <button type="submit" name="mode" value="as_is">Repost as is</button>
-                </div>
-              </form>
-            </article>
+            </details>
             """
             for record in records
         )
     return f"""
-    <section class="panel">
-      <p class="eyebrow">Memory</p>
-      <h2>Recent Posts</h2>
+    <section id="memory" class="section">
+      <div class="section-head">
+        <div>
+          <p class="eyebrow">Memory</p>
+          <h2>Recent Posts</h2>
+        </div>
+      </div>
       <div class="history">{rows}</div>
     </section>
     """
+
+
+def compact_post_title(post_text: object, limit: int = 120) -> str:
+    text = " ".join(str(post_text or "").split())
+    if not text:
+        return "Untitled post"
+    return text if len(text) <= limit else text[: limit - 1].rstrip() + "..."
+
+
+def post_thumb(record: dict) -> str:
+    image_url = record.get("image_url")
+    if image_url:
+        return f'<img class="post-thumb" src="{esc(image_url)}" alt="">'
+    return '<span class="post-thumb placeholder">No image</span>'
 
 
 def page(title: str, content: str) -> str:
@@ -532,15 +575,17 @@ def page(title: str, content: str) -> str:
     theme_mode = env.get("UI_THEME_MODE", "light")
     theme_color = normalize_color(env.get("UI_THEME_COLOR", "#1264a3"))
     dark = theme_mode == "dark"
-    bg = "#111418" if dark else "#f7f8fa"
-    panel = "#181d23" if dark else "#ffffff"
-    text = "#eef2f5" if dark else "#17202a"
-    muted = "#a9b3bd" if dark else "#65717e"
-    border = "#303842" if dark else "#d8dde3"
-    field_bg = "#12171d" if dark else "#ffffff"
-    post_text = "#dde5ec" if dark else "#27313b"
+    bg = "#0f1115" if dark else "#f6f7f9"
+    surface = "#161a20" if dark else "#ffffff"
+    surface_2 = "#11151b" if dark else "#fbfcfd"
+    text = "#edf1f5" if dark else "#171b20"
+    muted = "#9aa4af" if dark else "#667085"
+    border = "#2a313a" if dark else "#d9dee5"
+    field_bg = "#10141a" if dark else "#ffffff"
+    post_text = "#dbe3ec" if dark else "#2d3640"
     alert_bg = "#2a1717" if dark else "#fff4f2"
-    alert_border = "#7f2a25" if dark else "#f5c2c0"
+    alert_border = "#7f2a25" if dark else "#f2b8b5"
+    subtle = "#202630" if dark else "#eef2f6"
     return f"""
     <!doctype html>
     <html lang="en">
@@ -552,7 +597,8 @@ def page(title: str, content: str) -> str:
       <style>
         :root {{
           --bg: {bg};
-          --panel: {panel};
+          --surface: {surface};
+          --surface-2: {surface_2};
           --text: {text};
           --muted: {muted};
           --border: {border};
@@ -560,8 +606,8 @@ def page(title: str, content: str) -> str:
           --post-text: {post_text};
           --alert-bg: {alert_bg};
           --alert-border: {alert_border};
+          --subtle: {subtle};
           --accent: {theme_color};
-          --accent-dark: {theme_color};
           --danger: #b42318;
         }}
         * {{ box-sizing: border-box; }}
@@ -569,75 +615,116 @@ def page(title: str, content: str) -> str:
           margin: 0;
           background: var(--bg);
           color: var(--text);
-          font-family: Arial, Helvetica, sans-serif;
+          font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
           line-height: 1.5;
         }}
-        main {{ width: min(1180px, calc(100vw - 32px)); margin: 28px auto; }}
-        h1, h2 {{ margin: 0; letter-spacing: 0; }}
-        h1 {{ font-size: 32px; }}
-        h2 {{ font-size: 22px; }}
-        .eyebrow {{ margin: 0 0 4px; color: var(--muted); font-size: 12px; text-transform: uppercase; font-weight: 700; }}
-        .panel {{
-          background: var(--panel);
+        a {{ color: inherit; text-decoration: none; }}
+        main {{ width: min(1360px, calc(100vw - 32px)); margin: 20px auto 36px; }}
+        h1, h2 {{ margin: 0; letter-spacing: 0; line-height: 1.2; }}
+        h1 {{ font-size: 24px; font-weight: 720; }}
+        h2 {{ font-size: 18px; font-weight: 720; }}
+        .eyebrow {{ margin: 0 0 4px; color: var(--muted); font-size: 11px; text-transform: uppercase; font-weight: 720; letter-spacing: .04em; }}
+        .topbar {{
+          position: sticky;
+          top: 0;
+          z-index: 5;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 16px;
+          min-height: 70px;
+          background: color-mix(in srgb, var(--bg) 88%, transparent);
+          backdrop-filter: blur(12px);
+          border-bottom: 1px solid var(--border);
+          margin-bottom: 20px;
+        }}
+        .top-actions {{ display: flex; align-items: center; gap: 10px; }}
+        .app-grid {{
+          display: grid;
+          grid-template-columns: 190px minmax(0, 1fr);
+          gap: 20px;
+          align-items: start;
+        }}
+        .sidebar {{
+          position: sticky;
+          top: 90px;
+          display: grid;
+          gap: 4px;
+          padding: 8px;
           border: 1px solid var(--border);
           border-radius: 8px;
-          padding: 22px;
-          margin-bottom: 18px;
+          background: var(--surface);
+        }}
+        .sidebar a {{
+          border-radius: 6px;
+          padding: 9px 10px;
+          color: var(--muted);
+          font-size: 13px;
+          font-weight: 650;
+        }}
+        .sidebar a:hover {{ background: var(--subtle); color: var(--text); }}
+        .workspace {{ display: grid; gap: 16px; }}
+        .section {{
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          padding: 20px;
+        }}
+        .section-head {{
+          display: flex;
+          justify-content: space-between;
+          gap: 16px;
+          align-items: center;
+          padding-bottom: 14px;
+          border-bottom: 1px solid var(--border);
         }}
         .themebar {{
           display: flex;
           align-items: center;
-          justify-content: space-between;
-          gap: 14px;
-          background: var(--panel);
-          border: 1px solid var(--border);
-          border-radius: 8px;
-          padding: 14px 16px;
-          margin-bottom: 18px;
+          gap: 10px;
         }}
-        .themebar strong {{ display: block; font-size: 18px; }}
         .theme-controls {{
           display: flex;
           border: 1px solid var(--border);
           border-radius: 6px;
           overflow: hidden;
-          margin-left: auto;
+          background: var(--surface);
         }}
         .seg {{
           border: 0;
           border-right: 1px solid var(--border);
-          padding: 9px 14px;
+          padding: 8px 12px;
           background: var(--field-bg);
           color: var(--text);
           cursor: pointer;
-          font-weight: 700;
+          font-weight: 650;
+          font-size: 13px;
         }}
         .seg:last-child {{ border-right: 0; }}
         .seg.active {{ background: var(--accent); color: white; }}
         .color-form input {{
-          width: 46px;
-          height: 38px;
+          width: 38px;
+          height: 34px;
           padding: 3px;
           margin: 0;
           cursor: pointer;
         }}
-        .panel-title {{ display: flex; justify-content: space-between; gap: 16px; align-items: center; }}
         .primary {{
           border: 0;
           border-radius: 6px;
-          padding: 10px 16px;
+          padding: 9px 14px;
           background: var(--accent);
           color: white;
-          font-weight: 700;
+          font-weight: 720;
           cursor: pointer;
         }}
-        .primary:hover {{ background: var(--accent-dark); }}
+        .primary:hover {{ filter: brightness(.96); }}
         .primary:disabled {{ opacity: .55; cursor: not-allowed; }}
         .status-grid {{
           display: grid;
           grid-template-columns: repeat(4, minmax(0, 1fr));
-          gap: 12px;
-          margin-top: 18px;
+          gap: 10px;
+          margin-top: 16px;
         }}
         .schedule-card {{
           display: grid;
@@ -646,8 +733,9 @@ def page(title: str, content: str) -> str:
           align-items: center;
           border: 1px solid var(--border);
           border-radius: 6px;
-          padding: 12px;
+          padding: 11px 12px;
           margin-top: 12px;
+          background: var(--surface-2);
         }}
         .schedule-card span {{ color: var(--muted); font-size: 13px; }}
         .schedule-card strong {{ overflow-wrap: anywhere; }}
@@ -655,11 +743,12 @@ def page(title: str, content: str) -> str:
           border: 1px solid var(--border);
           border-radius: 6px;
           padding: 12px;
-          min-height: 70px;
+          min-height: 68px;
+          background: var(--surface-2);
         }}
         .status-grid .wide {{ grid-column: span 4; }}
         .status-grid span, label {{ display: block; color: var(--muted); font-size: 13px; }}
-        .status-grid strong {{ display: block; margin-top: 5px; font-size: 15px; overflow-wrap: anywhere; }}
+        .status-grid strong {{ display: block; margin-top: 5px; font-size: 14px; overflow-wrap: anywhere; color: var(--text); }}
         .settings {{
           display: grid;
           grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -673,18 +762,23 @@ def page(title: str, content: str) -> str:
           border-top: 1px solid var(--border);
           color: var(--text);
           font-size: 14px;
-          font-weight: 700;
+          font-weight: 720;
         }}
         .form-section:first-child {{ margin-top: 0; padding-top: 0; border-top: 0; }}
-        input, select {{
+        input, select, textarea {{
           width: 100%;
           margin-top: 6px;
           border: 1px solid var(--border);
           border-radius: 6px;
-          padding: 10px 11px;
+          padding: 9px 10px;
           font: inherit;
           color: var(--text);
           background: var(--field-bg);
+        }}
+        input:focus, select:focus, textarea:focus {{
+          border-color: var(--accent);
+          box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+          outline: none;
         }}
         .toggle {{
           display: flex;
@@ -693,7 +787,8 @@ def page(title: str, content: str) -> str:
           color: var(--text);
           border: 1px solid var(--border);
           border-radius: 6px;
-          padding: 10px 11px;
+          padding: 9px 10px;
+          background: var(--surface-2);
         }}
         .toggle input {{ width: auto; margin: 0; }}
         .settings button {{ align-self: end; }}
@@ -707,10 +802,56 @@ def page(title: str, content: str) -> str:
           margin-bottom: 18px;
           font-weight: 700;
         }}
-        .history {{ display: grid; gap: 12px; margin-top: 16px; }}
-        .post {{ border: 1px solid var(--border); border-radius: 6px; padding: 14px; }}
-        .post p {{ margin: 10px 0 0; white-space: pre-wrap; color: var(--post-text); }}
-        .post-meta {{ display: flex; flex-wrap: wrap; gap: 10px; color: var(--muted); font-size: 12px; }}
+        .history {{ display: grid; gap: 10px; margin-top: 16px; }}
+        .post {{ border: 1px solid var(--border); border-radius: 8px; background: var(--surface-2); overflow: hidden; }}
+        .post[open] {{ border-color: color-mix(in srgb, var(--accent) 38%, var(--border)); }}
+        .post summary {{
+          display: grid;
+          grid-template-columns: 92px minmax(0, 1fr) auto;
+          gap: 12px;
+          align-items: center;
+          padding: 12px;
+          cursor: pointer;
+          list-style: none;
+        }}
+        .post summary::-webkit-details-marker {{ display: none; }}
+        .post summary:hover {{ background: color-mix(in srgb, var(--subtle) 72%, transparent); }}
+        .post-thumb {{
+          width: 92px;
+          height: 62px;
+          border: 1px solid var(--border);
+          border-radius: 6px;
+          object-fit: cover;
+          background: var(--field-bg);
+        }}
+        .post-thumb.placeholder {{
+          display: grid;
+          place-items: center;
+          color: var(--muted);
+          font-size: 11px;
+          font-weight: 650;
+        }}
+        .post-summary {{ display: grid; gap: 6px; min-width: 0; }}
+        .post-title {{
+          color: var(--text);
+          font-size: 14px;
+          font-weight: 700;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }}
+        .post-detail {{ border-top: 1px solid var(--border); padding: 14px; }}
+        .post-detail p {{ margin: 0; white-space: pre-wrap; color: var(--post-text); }}
+        .post-meta {{ display: flex; flex-wrap: wrap; gap: 8px; color: var(--muted); font-size: 12px; }}
+        .expand-label {{
+          border: 1px solid var(--border);
+          border-radius: 999px;
+          padding: 5px 9px;
+          color: var(--muted);
+          font-size: 12px;
+          font-weight: 700;
+        }}
+        .post[open] .expand-label {{ color: var(--accent); border-color: var(--accent); }}
         .post-actions {{ margin-top: 12px; }}
         .post-actions textarea {{
           width: 100%;
@@ -722,6 +863,7 @@ def page(title: str, content: str) -> str:
           font: inherit;
           color: var(--text);
           background: var(--field-bg);
+          margin-top: 0;
         }}
         .action-row {{ display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }}
         .post-actions button {{
@@ -737,13 +879,19 @@ def page(title: str, content: str) -> str:
         .empty {{ color: var(--muted); margin-bottom: 0; }}
         @media (max-width: 760px) {{
           main {{ width: min(100vw - 20px, 1180px); margin: 10px auto; }}
-          .panel-title, .settings {{ display: block; }}
-          .themebar {{ align-items: stretch; flex-wrap: wrap; }}
-          .theme-controls {{ margin-left: 0; }}
+          .topbar {{ position: static; display: grid; gap: 12px; padding-bottom: 14px; }}
+          .top-actions {{ align-items: stretch; flex-wrap: wrap; }}
+          .app-grid {{ grid-template-columns: 1fr; }}
+          .sidebar {{ position: static; grid-template-columns: repeat(3, 1fr); }}
+          .sidebar a {{ text-align: center; }}
+          .settings {{ display: block; }}
           .settings label, .settings button {{ margin-top: 12px; }}
           .status-grid {{ grid-template-columns: 1fr; }}
           .status-grid .wide {{ grid-column: span 1; }}
           .schedule-card {{ grid-template-columns: 1fr; }}
+          .post summary {{ grid-template-columns: 70px minmax(0, 1fr); }}
+          .post-thumb {{ width: 70px; height: 54px; }}
+          .expand-label {{ display: none; }}
         }}
       </style>
     </head>
