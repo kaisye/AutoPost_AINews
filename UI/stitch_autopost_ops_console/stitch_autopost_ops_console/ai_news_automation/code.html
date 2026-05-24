@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AutoPost AI - Pipeline Configuration</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+        .pipeline-card {
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .pipeline-card:hover {
+            border-color: #0F172A;
+        }
+        /* Hide scrollbar for Chrome, Safari and Opera */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        /* Hide scrollbar for IE, Edge and Firefox */
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-container": "#98805d",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "surface-dim": "#d8dadc",
+                      "on-background": "#191c1e",
+                      "primary-fixed-dim": "#bec6e0",
+                      "on-error": "#ffffff",
+                      "on-secondary-container": "#54647a",
+                      "surface-container": "#eceef0",
+                      "error-container": "#ffdad6",
+                      "on-primary-fixed": "#131b2e",
+                      "primary": "#000000",
+                      "secondary": "#505f76",
+                      "surface-container-low": "#f2f4f6",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "tertiary-container": "#271901",
+                      "tertiary-fixed": "#fcdeb5",
+                      "secondary-fixed": "#d3e4fe",
+                      "secondary-container": "#d0e1fb",
+                      "on-tertiary-fixed-variant": "#574425",
+                      "outline": "#76777d",
+                      "secondary-fixed-dim": "#b7c8e1",
+                      "error": "#ba1a1a",
+                      "inverse-surface": "#2d3133",
+                      "on-primary-container": "#7c839b",
+                      "on-primary": "#ffffff",
+                      "background": "#f7f9fb",
+                      "outline-variant": "#c6c6cd",
+                      "on-secondary-fixed-variant": "#38485d",
+                      "surface-bright": "#f7f9fb",
+                      "on-surface": "#191c1e",
+                      "surface-variant": "#e0e3e5",
+                      "inverse-primary": "#bec6e0",
+                      "surface-container-high": "#e6e8ea",
+                      "tertiary-fixed-dim": "#dec29a",
+                      "on-secondary-fixed": "#0b1c30",
+                      "surface-container-highest": "#e0e3e5",
+                      "tertiary": "#000000",
+                      "surface-tint": "#565e74",
+                      "on-surface-variant": "#45464d",
+                      "primary-fixed": "#dae2fd",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-on-surface": "#eff1f3",
+                      "primary-container": "#131b2e",
+                      "surface": "#f7f9fb",
+                      "on-tertiary-fixed": "#271901"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "fontFamily": {
+                      "label-md": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "display": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "code": ["jetbrainsMono"],
+                      "headline-md": ["Inter"]
+              }
+            }
+          }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface">
+<!-- Sidebar (Shared Component JSON Mapping) -->
+<aside class="fixed left-0 top-0 h-screen w-[240px] z-40 bg-surface border-r border-outline-variant flex flex-col gap-1 p-4">
+<div class="mb-8 px-2">
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface">AutoPost AI</h1>
+<p class="text-on-surface-variant font-label-sm text-label-sm">Automation Hub</p>
+</div>
+<nav class="flex-1 flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+<span class="font-body-md text-body-md">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">auto_awesome</span>
+<span class="font-body-md text-body-md">Content Studio</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">library_books</span>
+<span class="font-body-md text-body-md">Content Library</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+<span class="font-body-md text-body-md">Schedule</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT bg-surface-container-high text-on-surface font-semibold" href="#">
+<span class="material-symbols-outlined text-[20px]">account_tree</span>
+<span class="font-body-md text-body-md">Workflows</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">newspaper</span>
+<span class="font-body-md text-body-md">AI News</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">history</span>
+<span class="font-body-md text-body-md">Run History</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-DEFAULT text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto border-t border-outline-variant pt-4 px-2 flex items-center gap-3">
+<div class="w-8 h-8 bg-surface-variant rounded-full overflow-hidden">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBhgl04VKwY4ymV_SnjSXiqE-3yyNiPUtYxqFFs_57xgtV7l2PEsdj8U7fGAe5Q5mBNoKYua0CgwneiSniiWu8cTY7qHjRRueYKo5RohE45C18P7btZjgpVgLZQIVPCAr5SBlQH1xVD0iK8KXX1cHDt3Q2lfI-ypbgCEj3oARzPkFS_jlKcMAsb52rLhunH4Ge2eQUy-YKDaM6ngPM0bwZ_qLIwok02iyf3qWlxx5t9xcqCa4UzAxdky6-RBzUNCBa10u_UCj8GISp"/>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md">Alex Rivera</span>
+<span class="text-[10px] text-on-surface-variant uppercase tracking-wider">Pro Tier</span>
+</div>
+</div>
+</aside>
+<!-- Top AppBar (Shared Component JSON Mapping) -->
+<header class="fixed top-0 right-0 left-[240px] h-16 z-30 bg-surface border-b border-outline-variant flex justify-between items-center px-6">
+<div class="flex items-center gap-4">
+<span class="font-headline-md text-headline-md font-bold text-on-surface">Pipeline Configuration</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-4 py-2 border border-outline-variant rounded-DEFAULT font-label-md text-label-md hover:bg-surface-container-low transition-colors">
+                Preview Latest News
+            </button>
+<button class="px-4 py-2 bg-primary text-on-primary rounded-DEFAULT font-label-md text-label-md active:scale-95 transition-transform">
+                Run Pipeline Now
+            </button>
+<div class="h-6 w-px bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-on-surface transition-colors" data-icon="light_mode">light_mode</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-on-surface transition-colors" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-on-surface transition-colors" data-icon="help_outline">help_outline</span>
+</div>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[240px] pt-16 min-h-screen p-8">
+<!-- Status Banner -->
+<div class="mb-8 flex items-center justify-between bg-surface-container-lowest border border-outline-variant p-4 rounded-lg">
+<div class="flex items-center gap-4">
+<div class="relative flex h-3 w-3">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+<span class="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
+</div>
+<div>
+<h3 class="font-label-md text-label-md text-on-surface">Automation Active</h3>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Last run: 14 minutes ago • Next run: 12:00 PM EST</p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<span class="bg-emerald-50 text-emerald-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">Healthy</span>
+<span class="bg-on-primary-container/10 text-on-primary-container text-[10px] font-bold px-2 py-0.5 rounded-full uppercase">84 Posts This Week</span>
+</div>
+</div>
+<!-- Configuration Grid -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Column 1: Search & Ranking (Bento Style) -->
+<div class="col-span-8 flex flex-col gap-gutter">
+<!-- Search Configuration -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-lg p-6">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-on-surface-variant">search</span>
+<h2 class="font-headline-md text-headline-md">Search Configuration</h2>
+</div>
+<div class="grid grid-cols-2 gap-6">
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Global Query</label>
+<input class="bg-transparent border border-outline-variant focus:border-primary focus:ring-2 focus:ring-surface-container rounded-DEFAULT p-3 font-body-md text-body-md" type="text" value="(AI OR machine learning) AND (venture capital OR acquisition)"/>
+<p class="text-[11px] text-on-surface-variant">Supports Boolean operators and advanced search syntax.</p>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Lookback Period</label>
+<select class="bg-transparent border border-outline-variant focus:border-primary focus:ring-2 focus:ring-surface-container rounded-DEFAULT p-3 font-body-md text-body-md">
+<option>Last 6 Hours</option>
+<option selected="">Last 24 Hours</option>
+<option>Last 3 Days</option>
+<option>Last 7 Days</option>
+</select>
+<p class="text-[11px] text-on-surface-variant">Data freshness limit for initial scraping.</p>
+</div>
+</div>
+<div class="mt-8 flex flex-wrap gap-2">
+<div class="flex items-center gap-2 bg-surface-container px-3 py-1 rounded-full">
+<span class="text-[12px] font-medium">Source: TechCrunch</span>
+<span class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container px-3 py-1 rounded-full">
+<span class="text-[12px] font-medium">Source: Wired</span>
+<span class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+</div>
+<div class="flex items-center gap-2 bg-surface-container px-3 py-1 rounded-full">
+<span class="text-[12px] font-medium">Language: EN</span>
+<span class="material-symbols-outlined text-[14px] cursor-pointer">close</span>
+</div>
+<button class="text-primary font-label-sm text-label-sm flex items-center gap-1 ml-2">
+<span class="material-symbols-outlined text-[16px]">add</span> Add Source
+                        </button>
+</div>
+</section>
+<!-- Ranking & Selection -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-lg p-6">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-on-surface-variant">leaderboard</span>
+<h2 class="font-headline-md text-headline-md">Ranking Logic</h2>
+</div>
+<div class="grid grid-cols-2 gap-12">
+<div class="space-y-6">
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-3">Candidate Pool Size</label>
+<div class="flex items-center gap-4">
+<input class="flex-1 accent-primary" max="500" min="50" type="range" value="200"/>
+<span class="font-code text-code bg-surface-container px-2 py-1 rounded">200</span>
+</div>
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-3">Final Selection Count</label>
+<div class="flex items-center gap-4">
+<input class="flex-1 accent-primary" max="20" min="1" type="range" value="5"/>
+<span class="font-code text-code bg-surface-container px-2 py-1 rounded">5</span>
+</div>
+</div>
+</div>
+<div class="space-y-4 border-l border-outline-variant pl-8">
+<div class="flex items-center justify-between">
+<span class="text-body-md font-medium">Prioritize Engagement</span>
+<div class="w-10 h-5 bg-primary rounded-full relative cursor-pointer">
+<div class="absolute right-1 top-1 w-3 h-3 bg-on-primary rounded-full"></div>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-md font-medium">Semantic Deduplication</span>
+<div class="w-10 h-5 bg-primary rounded-full relative cursor-pointer">
+<div class="absolute right-1 top-1 w-3 h-3 bg-on-primary rounded-full"></div>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-md font-medium">Authority Weighting</span>
+<div class="w-10 h-5 bg-outline-variant rounded-full relative cursor-pointer">
+<div class="absolute left-1 top-1 w-3 h-3 bg-on-surface rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Column 2: Scheduling & Approval -->
+<div class="col-span-4 flex flex-col gap-gutter">
+<!-- Scheduling -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-lg p-6">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-on-surface-variant">schedule</span>
+<h2 class="font-headline-md text-headline-md">Scheduling</h2>
+</div>
+<div class="space-y-6">
+<div class="flex flex-col gap-3">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Run Frequency</label>
+<div class="grid grid-cols-2 gap-2">
+<button class="px-3 py-2 border-2 border-primary font-label-md text-label-md bg-surface-container-low">Daily Time</button>
+<button class="px-3 py-2 border border-outline-variant font-label-md text-label-md hover:bg-surface-container-low">Interval</button>
+</div>
+</div>
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Post Times (UTC)</label>
+<div class="space-y-2">
+<div class="flex items-center justify-between bg-surface-container-lowest border border-outline-variant p-2 rounded">
+<span class="font-code text-code">08:00 AM</span>
+<span class="material-symbols-outlined text-[18px] text-error cursor-pointer">delete</span>
+</div>
+<div class="flex items-center justify-between bg-surface-container-lowest border border-outline-variant p-2 rounded">
+<span class="font-code text-code">12:30 PM</span>
+<span class="material-symbols-outlined text-[18px] text-error cursor-pointer">delete</span>
+</div>
+<div class="flex items-center justify-between bg-surface-container-lowest border border-outline-variant p-2 rounded">
+<span class="font-code text-code">06:00 PM</span>
+<span class="material-symbols-outlined text-[18px] text-error cursor-pointer">delete</span>
+</div>
+<button class="w-full py-2 border border-dashed border-outline-variant rounded text-on-surface-variant font-label-sm text-label-sm hover:border-primary hover:text-primary transition-all">
+                                    + Add New Time Slot
+                                </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Approval Logic -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-lg p-6">
+<div class="flex items-center gap-2 mb-6">
+<span class="material-symbols-outlined text-on-surface-variant">verified_user</span>
+<h2 class="font-headline-md text-headline-md">Approval Logic</h2>
+</div>
+<div class="space-y-6">
+<div class="flex flex-col gap-2">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase">Telegram Timeout</label>
+<div class="flex items-center gap-2">
+<input class="w-20 bg-transparent border border-outline-variant focus:border-primary rounded-DEFAULT p-2 font-body-md text-body-md" type="number" value="30"/>
+<span class="font-body-md text-body-md">Minutes</span>
+</div>
+<p class="text-[11px] text-on-surface-variant">Wait time for manual approval via Telegram before auto-post triggers.</p>
+</div>
+<div class="p-4 bg-primary-container/10 rounded-lg border border-primary-container/20">
+<div class="flex items-start gap-3">
+<input checked="" class="mt-1 rounded-sm text-primary focus:ring-primary" type="checkbox"/>
+<div>
+<span class="font-body-md text-body-md font-semibold">Enable Auto-Approve</span>
+<p class="text-[12px] text-on-surface-variant mt-1">If confidence score is &gt; 0.95, bypass the timeout and post immediately.</p>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-outline-variant">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Human-in-the-loop</span>
+<div class="flex items-center gap-1">
+<span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+<span class="text-[12px] font-medium">Enabled</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+</div>
+<!-- Recent Runs Visualization -->
+<section class="mt-8 bg-surface-container-lowest border border-outline-variant rounded-lg p-6">
+<div class="flex items-center justify-between mb-8">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant">monitoring</span>
+<h2 class="font-headline-md text-headline-md">Pipeline Health &amp; History</h2>
+</div>
+<button class="text-primary font-label-sm text-label-sm flex items-center gap-1">
+                    View Full Report <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+</button>
+</div>
+<div class="grid grid-cols-7 gap-4">
+<div class="flex flex-col items-center gap-2">
+<div class="w-full h-32 bg-surface-container-low rounded relative flex items-end overflow-hidden">
+<div class="w-full bg-primary h-[85%] opacity-10"></div>
+<div class="absolute bottom-0 w-full bg-primary h-[45%] rounded-t-sm"></div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-medium">MON</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-full h-32 bg-surface-container-low rounded relative flex items-end overflow-hidden">
+<div class="w-full bg-primary h-[85%] opacity-10"></div>
+<div class="absolute bottom-0 w-full bg-primary h-[60%] rounded-t-sm"></div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-medium">TUE</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-full h-32 bg-surface-container-low rounded relative flex items-end overflow-hidden">
+<div class="w-full bg-primary h-[85%] opacity-10"></div>
+<div class="absolute bottom-0 w-full bg-primary h-[30%] rounded-t-sm"></div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-medium">WED</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-full h-32 bg-surface-container-low rounded relative flex items-end overflow-hidden">
+<div class="w-full bg-primary h-[85%] opacity-10"></div>
+<div class="absolute bottom-0 w-full bg-primary h-[75%] rounded-t-sm"></div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-medium">THU</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-full h-32 bg-surface-container-low rounded relative flex items-end overflow-hidden">
+<div class="w-full bg-primary h-[85%] opacity-10"></div>
+<div class="absolute bottom-0 w-full bg-primary h-[90%] rounded-t-sm"></div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-medium">FRI</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-full h-32 bg-surface-container-low rounded relative flex items-end overflow-hidden">
+<div class="w-full bg-primary h-[85%] opacity-10"></div>
+<div class="absolute bottom-0 w-full bg-primary h-[20%] rounded-t-sm"></div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-medium">SAT</span>
+</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-full h-32 bg-surface-container-low rounded relative flex items-end overflow-hidden">
+<div class="w-full bg-primary h-[85%] opacity-10"></div>
+<div class="absolute bottom-0 w-full bg-primary h-[15%] rounded-t-sm"></div>
+</div>
+<span class="text-[10px] text-on-surface-variant font-medium">SUN</span>
+</div>
+</div>
+<div class="mt-8 grid grid-cols-4 border-t border-outline-variant pt-6">
+<div class="text-center">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Success Rate</p>
+<p class="font-display text-display text-on-surface">99.2%</p>
+</div>
+<div class="text-center border-l border-outline-variant">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Avg Latency</p>
+<p class="font-display text-display text-on-surface">4.2s</p>
+</div>
+<div class="text-center border-l border-outline-variant">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Sources Hit</p>
+<p class="font-display text-display text-on-surface">14</p>
+</div>
+<div class="text-center border-l border-outline-variant">
+<p class="font-label-sm text-label-sm text-on-surface-variant uppercase">Tokens Used</p>
+<p class="font-display text-display text-on-surface">1.2M</p>
+</div>
+</div>
+</section>
+</main>
+<script>
+        // Simple micro-interaction for buttons
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('click', function() {
+                if (this.textContent.includes('Run Pipeline')) {
+                    const originalText = this.textContent;
+                    this.textContent = 'Initializing...';
+                    this.disabled = true;
+                    this.style.opacity = '0.7';
+                    
+                    setTimeout(() => {
+                        this.textContent = originalText;
+                        this.disabled = false;
+                        this.style.opacity = '1';
+                    }, 2000);
+                }
+            });
+        });
+
+        // Toggle switches
+        document.querySelectorAll('.relative.cursor-pointer').forEach(toggle => {
+            toggle.addEventListener('click', function() {
+                const circle = this.querySelector('div');
+                if (this.classList.contains('bg-primary')) {
+                    this.classList.remove('bg-primary');
+                    this.classList.add('bg-outline-variant');
+                    circle.classList.remove('right-1');
+                    circle.classList.add('left-1');
+                    circle.classList.remove('bg-on-primary');
+                    circle.classList.add('bg-on-surface');
+                } else {
+                    this.classList.remove('bg-outline-variant');
+                    this.classList.add('bg-primary');
+                    circle.classList.remove('left-1');
+                    circle.classList.add('right-1');
+                    circle.classList.remove('bg-on-surface');
+                    circle.classList.add('bg-on-primary');
+                }
+            });
+        });
+    </script>
+</body></html>

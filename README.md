@@ -19,7 +19,26 @@ The project is designed as a portfolio-grade Agentic AI system: it is not just a
 - SQLite memory for article fingerprints, post history, feedback, and audit logs.
 - Duplicate prevention by canonical URL and content similarity.
 - Admin UI for running the workflow, scheduling posts, updating configuration, and viewing history.
+- Media Platform MVP: Content Studio for manual posts with title, hook, body, image/video URL, sources, workflow template, and per-content scheduling.
+- Modular node catalog and reusable workflow templates for AI News Auto Post, Manual Post With Approval, Rewrite And Repost, and Scheduled Media Post.
 - Test suite and linting setup.
+
+## Media Platform MVP
+
+The project now keeps the original AI News automation while adding a modular media platform layer.
+
+- `ContentItem` is the generic post model used for drafts, scheduled posts, and published posts.
+- `MediaAsset` stores image/video metadata for manually prepared content.
+- `ScheduleJob` stores per-content publishing jobs, separate from the global AI news schedule.
+- `WorkflowTemplate` describes reusable node chains such as `manual_input -> facebook_publish`.
+- `nodes/` contains reusable node classes with a common `MediaNode` interface.
+
+The Admin UI includes:
+
+- `Content Studio`: create a manual Facebook or YouTube post with title, hook, body, hashtags, sources, image/video URL, workflow template, and optional schedule time.
+- `Workflow Builder`: inspect available reusable workflow templates and node modules.
+- `Schedule Calendar`: schedule existing content items and view queued jobs.
+- `Content Library`: review draft, scheduled, and published content items.
 
 ## Default LLM Provider
 
@@ -77,6 +96,7 @@ The workflow prevents duplicate publishing through three layers:
 - Telegram bot token and approver chat ID
 - NVIDIA API key or OpenAI API key
 - Optional Facebook Page ID and Page Access Token
+- Optional YouTube OAuth client ID, client secret, and refresh token for video uploads
 
 ## Setup
 
@@ -106,6 +126,19 @@ FACEBOOK_ENABLED=true
 FACEBOOK_PAGE_ID=
 FACEBOOK_PAGE_ACCESS_TOKEN=
 ```
+
+Optional YouTube video publishing for manual or scheduled content:
+
+```env
+YOUTUBE_ENABLED=true
+YOUTUBE_CLIENT_ID=
+YOUTUBE_CLIENT_SECRET=
+YOUTUBE_REFRESH_TOKEN=
+YOUTUBE_PRIVACY_STATUS=private
+YOUTUBE_CATEGORY_ID=28
+```
+
+YouTube publishing requires a `video` media item. The current publisher uploads the media URL as a YouTube video and uses the content title, body, hashtags, and sources as video metadata.
 
 ## Run Once
 

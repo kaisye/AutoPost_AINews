@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-tertiary-container": "#98805d",
+                    "on-tertiary": "#ffffff",
+                    "on-secondary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "surface-dim": "#d8dadc",
+                    "on-background": "#191c1e",
+                    "primary-fixed-dim": "#bec6e0",
+                    "on-error": "#ffffff",
+                    "on-secondary-container": "#54647a",
+                    "surface-container": "#eceef0",
+                    "error-container": "#ffdad6",
+                    "on-primary-fixed": "#131b2e",
+                    "primary": "#000000",
+                    "secondary": "#505f76",
+                    "surface-container-low": "#f2f4f6",
+                    "on-primary-fixed-variant": "#3f465c",
+                    "tertiary-container": "#271901",
+                    "tertiary-fixed": "#fcdeb5",
+                    "secondary-fixed": "#d3e4fe",
+                    "secondary-container": "#d0e1fb",
+                    "on-tertiary-fixed-variant": "#574425",
+                    "outline": "#76777d",
+                    "secondary-fixed-dim": "#b7c8e1",
+                    "error": "#ba1a1a",
+                    "inverse-surface": "#2d3133",
+                    "on-primary-container": "#7c839b",
+                    "on-primary": "#ffffff",
+                    "background": "#f7f9fb",
+                    "outline-variant": "#c6c6cd",
+                    "on-secondary-fixed-variant": "#38485d",
+                    "surface-bright": "#f7f9fb",
+                    "on-surface": "#191c1e",
+                    "surface-variant": "#e0e3e5",
+                    "inverse-primary": "#bec6e0",
+                    "surface-container-high": "#e6e8ea",
+                    "tertiary-fixed-dim": "#dec29a",
+                    "on-secondary-fixed": "#0b1c30",
+                    "surface-container-highest": "#e0e3e5",
+                    "tertiary": "#000000",
+                    "surface-tint": "#565e74",
+                    "on-surface-variant": "#45464d",
+                    "primary-fixed": "#dae2fd",
+                    "surface-container-lowest": "#ffffff",
+                    "inverse-on-surface": "#eff1f3",
+                    "primary-container": "#131b2e",
+                    "surface": "#f7f9fb",
+                    "on-tertiary-fixed": "#271901"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "margin_desktop": "32px",
+                    "stack_sm": "8px",
+                    "container_max_width": "1280px",
+                    "margin_mobile": "16px",
+                    "stack_lg": "24px",
+                    "gutter": "24px",
+                    "stack_md": "16px",
+                    "sidebar_width": "240px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "display": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "code": ["jetbrainsMono"],
+                    "headline-md": ["Inter"]
+            },
+            "fontSize": {
+                    "label-md": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600"}],
+                    "display": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                    "code": ["13px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        body { background-color: #f7f9fb; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #e2e8e0; border-radius: 10px; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+</head>
+<body class="font-body-md text-body-md text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-[240px] z-40 border-r border-outline-variant bg-surface flex flex-col gap-1 p-4 overflow-y-auto">
+<div class="mb-8 px-2">
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface">AutoPost AI</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Automation Hub</p>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded transition-colors duration-150 text-on-surface-variant hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded transition-colors duration-150 bg-surface-container-high text-on-surface font-semibold" href="#">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+<span class="font-body-md text-body-md">Content Studio</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded transition-colors duration-150 text-on-surface-variant hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined" data-icon="library_books">library_books</span>
+<span class="font-body-md text-body-md">Content Library</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded transition-colors duration-150 text-on-surface-variant hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-body-md text-body-md">Schedule</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded transition-colors duration-150 text-on-surface-variant hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined" data-icon="account_tree">account_tree</span>
+<span class="font-body-md text-body-md">Workflows</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded transition-colors duration-150 text-on-surface-variant hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined" data-icon="newspaper">newspaper</span>
+<span class="font-body-md text-body-md">AI News</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded transition-colors duration-150 text-on-surface-variant hover:bg-surface-container-low" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-body-md text-body-md">Run History</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded transition-colors duration-150 text-on-surface-variant hover:bg-surface-container-low mt-auto" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</nav>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-[240px] h-16 z-30 border-b border-outline-variant bg-surface flex justify-between items-center px-6">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-full py-2 pl-10 pr-4 text-body-md focus:ring-1 focus:ring-primary" placeholder="Search studio..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 px-4 py-2 border border-outline rounded font-label-md text-label-md hover:bg-surface-container-low transition-transform active:scale-95">
+                Run Now
+            </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded font-label-md text-label-md transition-transform active:scale-95">
+                Create Content
+            </button>
+<div class="flex items-center gap-2 border-l border-outline-variant pl-4">
+<button class="p-2 rounded-full hover:bg-surface-container-low"><span class="material-symbols-outlined" data-icon="light_mode">light_mode</span></button>
+<button class="p-2 rounded-full hover:bg-surface-container-low"><span class="material-symbols-outlined" data-icon="notifications">notifications</span></button>
+<button class="p-2 rounded-full hover:bg-surface-container-low"><span class="material-symbols-outlined" data-icon="help_outline">help_outline</span></button>
+<div class="w-8 h-8 rounded-full bg-surface-container-high overflow-hidden border border-outline-variant ml-2">
+<img alt="User Profile" data-alt="A professional headshot of a person with a friendly expression, captured with high-end studio lighting. The aesthetic is clean and modern, with a soft-focus office background that complements the minimalist UI of the application. The lighting is balanced, reflecting a professional yet approachable persona suitable for a high-velocity tech product environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzhkdml4_Q82v4lmsEsgE-7accf-Qhu16c-JQDhC3YPAjbyJZwzOba-a5p1sz4vO-99zbj9MXbK25mUZPATdBJVxlvxbqgeXD9FWXy_VqE3lpldaDSW-8FSzhkcOm8IAL83AgSfWZMqCL3XANL0rJsKVOin_517PNfUJsMvxwn2ZIegaI7ZAr841S2LGtNY2FR8pYciFFrczJxQMApKOROCJNv7mPKcHyzCJNcUfP9fW07STHUUpIgX2SpQIyrT6PXFIf0dpFn7X1m"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[240px] pt-16 min-h-screen">
+<div class="p-8 max-w-[1440px] mx-auto">
+<!-- Page Header -->
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Content Studio</h2>
+<p class="text-on-surface-variant mt-1">Refine and preview your automated media updates.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-6 py-2.5 bg-surface border border-outline rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-colors">Save Draft</button>
+<button class="px-6 py-2.5 bg-surface border border-outline rounded-lg font-label-md text-label-md hover:bg-surface-container-low transition-colors">Schedule</button>
+<button class="px-6 py-2.5 bg-primary text-on-primary rounded-lg font-label-md text-label-md transition-colors hover:opacity-90">Publish Now</button>
+</div>
+</div>
+<!-- Editor Grid -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Left: Editor (8 Columns) -->
+<div class="col-span-12 lg:col-span-7 flex flex-col gap-6">
+<!-- Channel Selector -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase mb-4">Distribution Channels</h3>
+<div class="flex flex-wrap gap-4">
+<label class="flex items-center gap-3 px-4 py-2 bg-surface-container rounded-lg border border-primary cursor-pointer group">
+<input checked="" class="rounded border-outline text-primary focus:ring-primary" type="checkbox"/>
+<span class="font-body-md">Facebook</span>
+</label>
+<label class="flex items-center gap-3 px-4 py-2 bg-surface-container-low border border-transparent rounded-lg opacity-50 cursor-not-allowed">
+<input class="rounded border-outline" disabled="" type="checkbox"/>
+<span class="font-body-md">Telegram (soon)</span>
+</label>
+<label class="flex items-center gap-3 px-4 py-2 bg-surface-container-low border border-transparent rounded-lg opacity-50 cursor-not-allowed">
+<input class="rounded border-outline" disabled="" type="checkbox"/>
+<span class="font-body-md">LinkedIn (soon)</span>
+</label>
+</div>
+</section>
+<!-- Content Section -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col gap-5">
+<div class="flex justify-between items-center mb-1">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase">Core Content</h3>
+<button class="text-primary font-label-sm flex items-center gap-1"><span class="material-symbols-outlined text-[18px]" data-icon="magic_button">magic_button</span> AI Rewrite</button>
+</div>
+<div class="grid grid-cols-1 gap-4">
+<div>
+<label class="block font-label-sm text-on-surface-variant mb-1.5 ml-1">Internal Title</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-3 text-body-md focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" type="text" value="Weekly Tech Pulse: AI Innovation"/>
+</div>
+<div>
+<label class="block font-label-sm text-on-surface-variant mb-1.5 ml-1">Hook</label>
+<textarea class="w-full bg-surface border border-outline-variant rounded-lg p-3 text-body-md focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all resize-none" rows="2">The future of automation is here, and it's more accessible than ever. 🚀</textarea>
+</div>
+<div>
+<label class="block font-label-sm text-on-surface-variant mb-1.5 ml-1">Body (Rich text)</label>
+<div class="border border-outline-variant rounded-lg overflow-hidden">
+<div class="bg-surface-container-low border-b border-outline-variant p-2 flex gap-2">
+<button class="p-1 hover:bg-surface-container-high rounded"><span class="material-symbols-outlined text-[20px]" data-icon="format_bold">format_bold</span></button>
+<button class="p-1 hover:bg-surface-container-high rounded"><span class="material-symbols-outlined text-[20px]" data-icon="format_italic">format_italic</span></button>
+<button class="p-1 hover:bg-surface-container-high rounded"><span class="material-symbols-outlined text-[20px]" data-icon="format_list_bulleted">format_list_bulleted</span></button>
+<div class="w-[1px] bg-outline-variant mx-1"></div>
+<button class="p-1 hover:bg-surface-container-high rounded"><span class="material-symbols-outlined text-[20px]" data-icon="link">link</span></button>
+</div>
+<textarea class="w-full bg-surface border-none p-4 text-body-md focus:ring-0 outline-none resize-none" id="editor-body" rows="6">Our latest analysis reveals a 40% uptick in open-source AI deployment across enterprise sectors. We break down the key drivers of this shift and what it means for the upcoming fiscal quarter.
+
+Key Takeaways:
+- Efficiency is no longer the only metric
+- Talent acquisition strategies are pivoting
+- Local models are gaining trust over cloud-only solutions</textarea>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block font-label-sm text-on-surface-variant mb-1.5 ml-1">Hashtags</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-3 text-body-md focus:ring-1 focus:ring-primary outline-none" type="text" value="#AI #TechNews #FutureOfWork"/>
+</div>
+<div>
+<label class="block font-label-sm text-on-surface-variant mb-1.5 ml-1">Sources</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-3 text-body-md focus:ring-1 focus:ring-primary outline-none" type="text" value="https://tech-index.io/reports"/>
+</div>
+</div>
+</div>
+</section>
+<!-- Media Section -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase mb-4">Media Asset</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="flex flex-col gap-4">
+<div>
+<label class="block font-label-sm text-on-surface-variant mb-1.5 ml-1">Media Type</label>
+<select class="w-full bg-surface border border-outline-variant rounded-lg p-3 text-body-md focus:ring-1 focus:ring-primary outline-none appearance-none">
+<option>None</option>
+<option selected="">Image</option>
+<option>Video</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-on-surface-variant mb-1.5 ml-1">URL Input</label>
+<div class="flex gap-2">
+<input class="flex-1 bg-surface border border-outline-variant rounded-lg p-3 text-body-md focus:ring-1 focus:ring-primary outline-none" id="media-url" type="text" value="https://images.unsplash.com/photo-1677442136019-21780ecad995"/>
+<button class="px-3 bg-surface-container-high rounded-lg border border-outline-variant"><span class="material-symbols-outlined" data-icon="upload">upload</span></button>
+</div>
+</div>
+<div>
+<label class="block font-label-sm text-on-surface-variant mb-1.5 ml-1">Alt Text</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-3 text-body-md focus:ring-1 focus:ring-primary outline-none" placeholder="Describe the image for accessibility" type="text"/>
+</div>
+</div>
+<div class="border-2 border-dashed border-outline-variant rounded-lg flex items-center justify-center bg-surface p-2 overflow-hidden relative group">
+<img alt="AI Chip Design" class="w-full h-full object-cover rounded-md opacity-80" data-alt="A macro photograph of a sophisticated AI processor chip glowing with blue and white energy circuits. The background is a dark, tech-focused environment with subtle bokeh light effects. The lighting is dramatic and futuristic, emphasizing the precision engineering and high-velocity computing power of the hardware. The overall mood is cold, professional, and advanced." id="media-preview" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlBivjO4l5UI0odyEbSmP-GFh_PaciRzvoxioMfnAr_I6RcRX0iYsCwv39scXcuFhBn3HfNlpVwU6wvRfEbzO2ZzOq8AnE56tOOlYX7WachJAeT-tbNsMQAkHTCaM6wFeyawqMo2HPUNmB-y4XcBuPQz8zub6W6joxjeJxlteKWJZnzvL4F-pRQvm-cybTab_ws0av3wxiGWI9QvcbMngBUWnbxTvS323UqfpyY0J6LMdtszDKrhQdLQVXLoOfM1F2LOr0BzgwkikN"/>
+<div class="absolute inset-0 bg-primary/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<button class="bg-surface text-on-surface px-4 py-2 rounded-full font-label-md flex items-center gap-2 shadow-sm">
+<span class="material-symbols-outlined" data-icon="edit">edit</span> Change Asset
+                                    </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Workflow & Schedule -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 mb-12">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase mb-4">Scheduling &amp; Workflow</h3>
+<div class="grid grid-cols-2 gap-6">
+<div>
+<label class="block font-label-sm text-on-surface-variant mb-1.5 ml-1">Template Selector</label>
+<select class="w-full bg-surface border border-outline-variant rounded-lg p-3 text-body-md focus:ring-1 focus:ring-primary outline-none">
+<option>Daily News Digest</option>
+<option selected="">Tech Innovation Weekly</option>
+<option>Market Flash Report</option>
+</select>
+</div>
+<div>
+<label class="block font-label-sm text-on-surface-variant mb-1.5 ml-1">Schedule Datetime</label>
+<div class="relative">
+<input class="w-full bg-surface border border-outline-variant rounded-lg p-3 text-body-md focus:ring-1 focus:ring-primary outline-none" type="datetime-local" value="2023-10-24T14:30"/>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right: Preview (5 Columns) -->
+<div class="col-span-12 lg:col-span-5 relative">
+<div class="sticky top-24 flex flex-col gap-6">
+<div class="flex items-center justify-between px-2">
+<h3 class="font-label-md text-label-md text-on-surface-variant uppercase">Live Preview</h3>
+<div class="flex gap-2">
+<button class="p-1.5 rounded bg-surface-container-high text-primary"><span class="material-symbols-outlined" data-icon="desktop_windows">desktop_windows</span></button>
+<button class="p-1.5 rounded hover:bg-surface-container-high"><span class="material-symbols-outlined" data-icon="smartphone">smartphone</span></button>
+</div>
+</div>
+<!-- Facebook Style Preview Card -->
+<div class="bg-white border border-outline-variant rounded-lg shadow-sm overflow-hidden max-w-[500px] mx-auto w-full">
+<!-- Facebook Header -->
+<div class="p-4 flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" data-icon="smart_toy">smart_toy</span>
+</div>
+<div>
+<h4 class="font-semibold text-[15px] text-on-surface">AutoPost AI - Global</h4>
+<p class="text-[13px] text-on-surface-variant leading-tight">Sponsored · <span class="material-symbols-outlined text-[12px]" data-icon="public">public</span></p>
+</div>
+<button class="ml-auto text-on-surface-variant"><span class="material-symbols-outlined" data-icon="more_horiz">more_horiz</span></button>
+</div>
+<!-- Post Text Content -->
+<div class="px-4 pb-3">
+<p class="font-bold text-[16px] mb-2 leading-tight" id="preview-hook">The future of automation is here, and it's more accessible than ever. 🚀</p>
+<p class="text-[15px] whitespace-pre-wrap leading-relaxed text-on-surface mb-3" id="preview-body">Our latest analysis reveals a 40% uptick in open-source AI deployment across enterprise sectors. We break down the key drivers of this shift and what it means for the upcoming fiscal quarter.
+
+Key Takeaways:
+- Efficiency is no longer the only metric
+- Talent acquisition strategies are pivoting
+- Local models are gaining trust over cloud-only solutions</p>
+<p class="text-secondary font-medium text-[15px]" id="preview-hashtags">#AI #TechNews #FutureOfWork</p>
+</div>
+<!-- Post Media -->
+<div class="aspect-video bg-surface-container relative overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="A crisp, high-resolution close-up of a state-of-the-art AI processor chip embedded in a futuristic motherboard. The electronic architecture is detailed with glowing azure light paths and pristine silver components. The setting is sterile and futuristic, echoing a high-tech laboratory. The lighting highlights the intricate textures of the silicon and circuitry, creating an image of immense technical power and clarity." id="live-media-preview" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDS6rL_TNMcSG6CecnWYexAd1Zjgsp4LCmz9Ty1FvzKCHPeUmMqfYjeLHaYHCE9nfAwB9gzk2ood3H_hUs37eXvuLlUjOKWrd8F2O9Lzi6dBqHoVON8ZWRXzRyetCOsf7cDhbi96HzVBewJf6kq_rUGMZUTM9AJ_CjQnb6j59W9Wab7vtUKXHBrSFIKg-WsD2FAEckJEgZsfoyp6bFf7uyri4HS7mpozUd-e9D9G5RzAm_fUarlT6Itz6aTMIp5fdPWSIUbMR6aG-Yh"/>
+</div>
+<!-- Link Preview Box -->
+<div class="bg-surface-container-low p-4 border-b border-outline-variant">
+<p class="text-[12px] uppercase text-on-surface-variant mb-1">tech-index.io</p>
+<h5 class="font-bold text-[17px] leading-tight text-on-surface">Weekly Tech Pulse: AI Innovation &amp; Strategic Insights</h5>
+</div>
+<!-- Engagement Bars -->
+<div class="px-4 py-2.5 flex items-center gap-1 border-b border-outline-variant">
+<div class="flex -space-x-1">
+<span class="w-5 h-5 rounded-full bg-blue-500 border-2 border-white flex items-center justify-center"><span class="material-symbols-outlined text-[10px] text-white" data-icon="thumb_up" style="font-variation-settings: 'FILL' 1">thumb_up</span></span>
+<span class="w-5 h-5 rounded-full bg-red-500 border-2 border-white flex items-center justify-center"><span class="material-symbols-outlined text-[10px] text-white" data-icon="favorite" style="font-variation-settings: 'FILL' 1">favorite</span></span>
+</div>
+<span class="text-[13px] text-on-surface-variant ml-1">4.2k</span>
+<span class="text-[13px] text-on-surface-variant ml-auto">128 Comments · 45 Shares</span>
+</div>
+<!-- Action Buttons -->
+<div class="px-2 py-1 flex justify-around">
+<button class="flex-1 py-2 flex items-center justify-center gap-2 hover:bg-surface-container-low rounded font-semibold text-on-surface-variant text-[14px]">
+<span class="material-symbols-outlined text-[20px]" data-icon="thumb_up">thumb_up</span> Like
+                                </button>
+<button class="flex-1 py-2 flex items-center justify-center gap-2 hover:bg-surface-container-low rounded font-semibold text-on-surface-variant text-[14px]">
+<span class="material-symbols-outlined text-[20px]" data-icon="chat_bubble_outline">chat_bubble_outline</span> Comment
+                                </button>
+<button class="flex-1 py-2 flex items-center justify-center gap-2 hover:bg-surface-container-low rounded font-semibold text-on-surface-variant text-[14px]">
+<span class="material-symbols-outlined text-[20px]" data-icon="share">share</span> Share
+                                </button>
+</div>
+</div>
+<!-- Info Card -->
+<div class="bg-primary-container text-on-primary-container p-4 rounded-xl flex items-start gap-4">
+<span class="material-symbols-outlined mt-0.5" data-icon="info">info</span>
+<div>
+<p class="font-label-md text-label-md font-bold mb-1">Preview Accuracy</p>
+<p class="text-on-primary-container/80 text-label-sm">This is a synthetic preview of how your content will appear on Facebook. Actual rendering may vary slightly based on user device and platform updates.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Micro-interactions and Live Preview logic
+        const editorBody = document.getElementById('editor-body');
+        const previewBody = document.getElementById('preview-body');
+        const mediaUrlInput = document.getElementById('media-url');
+        const mediaPreview = document.getElementById('media-preview');
+        const liveMediaPreview = document.getElementById('live-media-preview');
+
+        // Sync body text
+        editorBody.addEventListener('input', (e) => {
+            previewBody.textContent = e.target.value;
+        });
+
+        // Sync media URL (simple version)
+        mediaUrlInput.addEventListener('change', (e) => {
+            const url = e.target.value;
+            if (url.startsWith('http')) {
+                mediaPreview.src = url;
+                liveMediaPreview.src = url;
+            }
+        });
+
+        // Hover effect for nav items
+        document.querySelectorAll('nav a').forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                if (!item.classList.contains('bg-surface-container-high')) {
+                    item.classList.add('bg-surface-container-low');
+                }
+            });
+            item.addEventListener('mouseleave', () => {
+                if (!item.classList.contains('bg-surface-container-high')) {
+                    item.classList.remove('bg-surface-container-low');
+                }
+            });
+        });
+    </script>
+</body></html>

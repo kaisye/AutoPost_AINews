@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "on-tertiary-container": "#98805d",
+                  "on-tertiary": "#ffffff",
+                  "on-secondary": "#ffffff",
+                  "on-error-container": "#93000a",
+                  "surface-dim": "#d8dadc",
+                  "on-background": "#191c1e",
+                  "primary-fixed-dim": "#bec6e0",
+                  "on-error": "#ffffff",
+                  "on-secondary-container": "#54647a",
+                  "surface-container": "#eceef0",
+                  "error-container": "#ffdad6",
+                  "on-primary-fixed": "#131b2e",
+                  "primary": "#000000",
+                  "secondary": "#505f76",
+                  "surface-container-low": "#f2f4f6",
+                  "on-primary-fixed-variant": "#3f465c",
+                  "tertiary-container": "#271901",
+                  "tertiary-fixed": "#fcdeb5",
+                  "secondary-fixed": "#d3e4fe",
+                  "secondary-container": "#d0e1fb",
+                  "on-tertiary-fixed-variant": "#574425",
+                  "outline": "#76777d",
+                  "secondary-fixed-dim": "#b7c8e1",
+                  "error": "#ba1a1a",
+                  "inverse-surface": "#2d3133",
+                  "on-primary-container": "#7c839b",
+                  "on-primary": "#ffffff",
+                  "background": "#f7f9fb",
+                  "outline-variant": "#c6c6cd",
+                  "on-secondary-fixed-variant": "#38485d",
+                  "surface-bright": "#f7f9fb",
+                  "on-surface": "#191c1e",
+                  "surface-variant": "#e0e3e5",
+                  "inverse-primary": "#bec6e0",
+                  "surface-container-high": "#e6e8ea",
+                  "tertiary-fixed-dim": "#dec29a",
+                  "on-secondary-fixed": "#0b1c30",
+                  "surface-container-highest": "#e0e3e5",
+                  "tertiary": "#000000",
+                  "surface-tint": "#565e74",
+                  "on-surface-variant": "#45464d",
+                  "primary-fixed": "#dae2fd",
+                  "surface-container-lowest": "#ffffff",
+                  "inverse-on-surface": "#eff1f3",
+                  "primary-container": "#131b2e",
+                  "surface": "#f7f9fb",
+                  "on-tertiary-fixed": "#271901"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.125rem",
+                  "lg": "0.25rem",
+                  "xl": "0.5rem",
+                  "full": "0.75rem"
+          },
+          "spacing": {
+                  "margin_desktop": "32px",
+                  "stack_sm": "8px",
+                  "container_max_width": "1280px",
+                  "margin_mobile": "16px",
+                  "stack_lg": "24px",
+                  "gutter": "24px",
+                  "stack_md": "16px",
+                  "sidebar_width": "240px"
+          },
+          "fontFamily": {
+                  "label-md": ["Inter"],
+                  "body-md": ["Inter"],
+                  "headline-lg": ["Inter"],
+                  "display": ["Inter"],
+                  "body-lg": ["Inter"],
+                  "label-sm": ["Inter"],
+                  "code": ["jetbrainsMono"],
+                  "headline-md": ["Inter"]
+          },
+          "fontSize": {
+                  "label-md": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                  "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                  "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600"}],
+                  "display": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                  "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                  "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                  "code": ["13px", {"lineHeight": "20px", "fontWeight": "400"}],
+                  "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body { background-color: #f7f9fb; }
+    .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; font-size: 20px; }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    .drawer-open { transform: translateX(0); box-shadow: -10px 0 30px rgba(0,0,0,0.05); }
+    .drawer-closed { transform: translateX(100%); }
+  </style>
+</head>
+<body class="font-body-md text-body-md text-on-surface">
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-0 h-screen w-[240px] z-40 bg-surface border-r border-outline-variant flex flex-col gap-1 p-4">
+<div class="mb-8 px-2">
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface">AutoPost AI</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant opacity-70">Automation Hub</p>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150 rounded" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md">Overview</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150 rounded" href="#">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+<span class="font-body-md">Content Studio</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 bg-surface-container-high text-on-surface font-semibold rounded" href="#">
+<span class="material-symbols-outlined" data-icon="library_books">library_books</span>
+<span class="font-body-md">Content Library</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150 rounded" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-body-md">Schedule</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150 rounded" href="#">
+<span class="material-symbols-outlined" data-icon="account_tree">account_tree</span>
+<span class="font-body-md">Workflows</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150 rounded" href="#">
+<span class="material-symbols-outlined" data-icon="newspaper">newspaper</span>
+<span class="font-body-md">AI News</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150 rounded" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-body-md">Run History</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150 rounded mt-auto" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+</nav>
+</aside>
+<!-- TopAppBar -->
+<header class="fixed top-0 right-0 left-[240px] h-16 z-30 bg-surface border-b border-outline-variant flex justify-between items-center px-6">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline" data-icon="search">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg font-body-md focus:outline-none focus:border-primary transition-all" placeholder="Search content library..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="flex items-center gap-2 px-4 py-2 bg-surface border border-outline-variant rounded font-label-md hover:bg-surface-container-low transition-all active:scale-95">
+        Run Now
+      </button>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded font-label-md hover:opacity-90 transition-all active:scale-95">
+        Create Content
+      </button>
+<div class="h-6 w-px bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors"><span class="material-symbols-outlined" data-icon="light_mode">light_mode</span></button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors"><span class="material-symbols-outlined" data-icon="notifications">notifications</span></button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors"><span class="material-symbols-outlined" data-icon="help_outline">help_outline</span></button>
+</div>
+<img alt="User Avatar" class="w-8 h-8 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBudMRMQIAY9WmjJ11JUEyp54BBTP_SBDI-06ww_B0hlpKLQEQ7-Aji1PobG3tmbjk4KX3AHHPRwPG9-giK45rRey12FgIzEJ9THAMe6ALNnJz7C0WWzmHUEgvoFZmTauypBDtGChElQQyN0Gqm-KJxXsdZaIsBXkUv59VjH69gCM_Z0V2jSXZEkQj79XvsRyBf5etZLoufY41okXuPJsGzJy-Prir_YW0e3tVvFApXNi38JqZ6SXLs3CK3Y4gyMpAFQ1GhprkQHTvZ"/>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[240px] mt-16 p-8 min-h-[calc(100vh-64px)]">
+<!-- Header Section -->
+<div class="flex flex-col gap-6 mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Content Library</h2>
+<p class="text-on-surface-variant">Manage your automated news pipeline and content assets.</p>
+</div>
+<!-- Tabbed Navigation -->
+<div class="flex items-center gap-1 border-b border-outline-variant">
+<button class="px-6 py-3 border-b-2 border-primary font-label-md text-primary">All</button>
+<button class="px-6 py-3 border-b-2 border-transparent font-label-md text-on-surface-variant hover:text-on-surface transition-colors">Drafts</button>
+<button class="px-6 py-3 border-b-2 border-transparent font-label-md text-on-surface-variant hover:text-on-surface transition-colors">Scheduled</button>
+<button class="px-6 py-3 border-b-2 border-transparent font-label-md text-on-surface-variant hover:text-on-surface transition-colors">Published</button>
+<button class="px-6 py-3 border-b-2 border-transparent font-label-md text-on-surface-variant hover:text-on-surface transition-colors">Failed</button>
+</div>
+</div>
+<!-- Content Table Panel -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Thumbnail</th>
+<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Title</th>
+<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Status</th>
+<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Channel</th>
+<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Workflow</th>
+<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Scheduled/Published</th>
+<th class="px-6 py-3 font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1: Published -->
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer group" onclick="toggleDrawer(true)">
+<td class="px-6 py-4">
+<div class="w-16 h-10 rounded bg-surface-variant overflow-hidden border border-outline-variant">
+<img alt="Post Thumbnail" class="w-full h-full object-cover" data-alt="A futuristic AI-generated architectural visualization featuring sleek chrome curves and digital grid overlays. The scene is bathed in cold blue neon lighting against a stark black background, representing advanced data processing and neural networks in a cinematic, professional 3D render style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCXrBFq1bZczwyUDKHaxZQeR5WyYFAqUBsGBUBNhuyz8_FJM5y-g_cVNwral6vnHWmpIEPNa5FjS__uFcNxLtosjdrDkcBwm_zRJip4HswxxU7C4d1VdKZJm8RtG20yBeUvmIj0wtFP46qPePQMSqv1aaBUOh3sGSv65AK7h9p_xK38AIblE31MrpPSXE8PkobM_y923-gg1WV1hJl_GXjeDVnNowl4AMje0HWZDnkKP7qt9yN2I2ugT2a9LqDeMAKG9LCNRE9pcSZ7"/>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="font-body-md font-semibold text-on-surface line-clamp-1">AI Adoption in Retail 2024</p>
+<p class="text-label-sm text-on-surface-variant">autopost_v4_final.mp4</p>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-label-sm font-medium">Published</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="share">share</span>
+<span class="text-body-md">LinkedIn</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-body-md text-on-surface-variant">Global News Aggregator</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-body-md text-on-surface-variant">Oct 24, 14:30</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors" title="Edit"><span class="material-symbols-outlined" data-icon="edit">edit</span></button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors" title="Duplicate"><span class="material-symbols-outlined" data-icon="content_copy">content_copy</span></button>
+<button class="p-2 text-on-surface-variant hover:text-error transition-colors" title="Delete"><span class="material-symbols-outlined" data-icon="delete">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Scheduled -->
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer group" onclick="toggleDrawer(true)">
+<td class="px-6 py-4">
+<div class="w-16 h-10 rounded bg-surface-variant overflow-hidden border border-outline-variant">
+<img alt="Post Thumbnail" class="w-full h-full object-cover" data-alt="A clean, minimalist high-key studio shot of a modern humanoid robot hand holding a glowing crystal orb. The lighting is soft and professional, emphasizing the contrast between the white robotic components and the vibrant blue energy within the orb. The overall mood is optimistic and high-tech." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBlzyeeC_WrwloDB66KqR0aDWFYZ2sqeMjRJKO-OlMHVMONXxk0qP7OrLNTG_2NLdh-cA4ypRD8QkUOMMetNLX540hu0T4LWuog--6_3Oa2OLFMKBbItowJblvdKFcORzYxpqnZhhVeu7GOcgzKVLdzG7Ycq5G2_fptc_l_C8XgCJwL_Pmi97W-kDzgME-yzuOQCS1mporD7RhepaQ9jxagmkknJUBuHwviqATnKaOmlcYbHiYA-vuhI-ERQPP_-rZP2doykiNlS9zn"/>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="font-body-md font-semibold text-on-surface line-clamp-1">Robotics Breakthrough in surgery</p>
+<p class="text-label-sm text-on-surface-variant">surgery_tech_v2.png</p>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 text-label-sm font-medium">Scheduled</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="alternate_email">alternate_email</span>
+<span class="text-body-md">X (Twitter)</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-body-md text-on-surface-variant">Tech Trends Daily</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-body-md text-on-surface-variant">Oct 26, 09:00</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined" data-icon="edit">edit</span></button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined" data-icon="content_copy">content_copy</span></button>
+<button class="p-2 text-on-surface-variant hover:text-error transition-colors"><span class="material-symbols-outlined" data-icon="close">close</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3: Failed -->
+<tr class="hover:bg-surface-container-low transition-colors cursor-pointer group" onclick="toggleDrawer(true)">
+<td class="px-6 py-4">
+<div class="w-16 h-10 rounded bg-surface-variant overflow-hidden border border-outline-variant">
+<img alt="Post Thumbnail" class="w-full h-full object-cover" data-alt="A stylized digital representation of a network error, showing a shattered glass effect over a complex circuit board pattern. The colors are dominated by deep grays and intense red accents that pulse with a warning glow. Minimalist flat design with high professional polish, evoking a sense of technical urgency." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDhAvm9zAv40nMAKDBcETmVRnGkQji4vDl_uXhBSHJ9CpRZ4AA1oSMaq4bWRrg3n1fKfVDKBCXRDkMQcnoo1am-xzxvLHsTnl_Hs2VmTaAC74H4PJgpB4xuSfauuFK09BQkrNL96FKMiZpvzFrY4k4g8iNAmnbFYFjuSxxYpOcOp5y_CgkXh8VAJeUjq2rIQ2881sHBisE6PmzDU7ksn3iuG2rglnQz_RbL7QVyKbxx_CGfCzwJWJKyeIAdLXsObJMMr-t1sH2FMy6l"/>
+</div>
+</td>
+<td class="px-6 py-4">
+<p class="font-body-md font-semibold text-on-surface line-clamp-1">Crypto Market Volatility Report</p>
+<p class="text-label-sm text-on-surface-variant">market_report.pdf</p>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 text-label-sm font-medium">Failed</span>
+</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="public">public</span>
+<span class="text-body-md">Web Blog</span>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="text-body-md text-on-surface-variant">FinTech Pulse</span>
+</td>
+<td class="px-6 py-4">
+<span class="text-body-md text-on-surface-variant">Oct 23, 11:15</span>
+</td>
+<td class="px-6 py-4 text-right">
+<div class="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined" data-icon="refresh">refresh</span></button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined" data-icon="edit">edit</span></button>
+<button class="p-2 text-on-surface-variant hover:text-error transition-colors"><span class="material-symbols-outlined" data-icon="delete">delete</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination / Info -->
+<div class="px-6 py-4 bg-surface border-t border-outline-variant flex items-center justify-between">
+<p class="text-label-sm text-on-surface-variant">Showing 1 to 10 of 248 entries</p>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-low text-label-sm disabled:opacity-50" disabled="">Previous</button>
+<button class="px-3 py-1 border border-outline-variant bg-primary text-on-primary rounded text-label-sm">1</button>
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-low text-label-sm">2</button>
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-low text-label-sm">3</button>
+<button class="px-3 py-1 border border-outline-variant rounded hover:bg-surface-container-low text-label-sm">Next</button>
+</div>
+</div>
+</div>
+</main>
+<!-- Detail Drawer -->
+<div class="fixed top-0 right-0 h-full w-[480px] bg-surface z-50 transition-transform duration-300 ease-in-out drawer-closed border-l border-outline-variant flex flex-col" id="detailDrawer">
+<!-- Drawer Header -->
+<div class="px-6 py-4 border-b border-outline-variant flex items-center justify-between bg-surface">
+<h3 class="font-headline-md text-headline-md text-on-surface">Post Details</h3>
+<button class="p-2 hover:bg-surface-container-low rounded-full transition-colors" onclick="toggleDrawer(false)">
+<span class="material-symbols-outlined" data-icon="close">close</span>
+</button>
+</div>
+<!-- Drawer Content -->
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-8">
+<!-- Media Preview -->
+<div class="space-y-3">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Preview</label>
+<div class="aspect-video w-full rounded-xl bg-surface-variant overflow-hidden border border-outline-variant shadow-inner">
+<img alt="Detail View" class="w-full h-full object-cover" data-alt="A wide cinematic shot of a futuristic data center interior. Glowing server racks stretch into a vanishing point under soft, ambient light-mode illumination. The floor is a polished white surface reflecting the intricate blue and white LED patterns from the tech stacks. The atmosphere is quiet, professional, and hyper-modern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuApKEVIlTh-d4WrngFQvSp2ie3mrD6s8VwVpbcpM2rvB0z4_9Jklglk03sJmOr5Dvk5HPpRnQyhEnY9aoJoxh63cydp_6WsW6ep5-70d8oX781ngss3PTLgdOoBt2FgU6nYJzFqhcMGtYx1ZWSp_5wcqylt8DNR5WHT-Bib7CIhQhsrd3wY6sdR6pM3Qm_jX6cNQvwSYfCRC2q-QiRSDkafRPHtyRj2lQnnPKx25PU5L2opBqFu1jWB7TKMaTeIz9L0jux-e5M9z3Pp"/>
+</div>
+</div>
+<!-- Content Info -->
+<div class="space-y-4">
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Title</label>
+<p class="font-body-lg text-body-lg font-bold mt-1">AI Adoption in Retail 2024: A Global Perspective</p>
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Description</label>
+<p class="text-on-surface-variant mt-1 leading-relaxed">This post analyzes the shift towards automated inventory management and personalized customer experiences across top-tier retail chains in EMEA and NA regions.</p>
+</div>
+</div>
+<!-- Metadata Grid -->
+<div class="grid grid-cols-2 gap-4">
+<div class="p-4 bg-surface-container-low rounded-lg border border-outline-variant">
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Status</label>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 text-label-sm font-medium">Published</span>
+</div>
+<div class="p-4 bg-surface-container-low rounded-lg border border-outline-variant">
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Workflow</label>
+<span class="font-body-md font-medium">News Aggregator</span>
+</div>
+<div class="p-4 bg-surface-container-low rounded-lg border border-outline-variant">
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Engagement</label>
+<span class="font-body-md font-medium">2.4k Views</span>
+</div>
+<div class="p-4 bg-surface-container-low rounded-lg border border-outline-variant">
+<label class="font-label-sm text-label-sm text-on-surface-variant block mb-1">Channel</label>
+<span class="font-body-md font-medium">LinkedIn</span>
+</div>
+</div>
+<!-- History Logs -->
+<div class="space-y-4">
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Run History Logs</label>
+<div class="space-y-3">
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-2 h-2 rounded-full bg-primary mt-2"></div>
+<div class="w-px h-full bg-outline-variant"></div>
+</div>
+<div class="pb-4">
+<p class="text-label-md font-semibold">Post Published Successfully</p>
+<p class="text-label-sm text-on-surface-variant">Oct 24, 2024 • 14:30:12</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-2 h-2 rounded-full bg-outline-variant mt-2"></div>
+<div class="w-px h-full bg-outline-variant"></div>
+</div>
+<div class="pb-4">
+<p class="text-label-md">Media Optimization Complete</p>
+<p class="text-label-sm text-on-surface-variant">Oct 24, 2024 • 14:28:45</p>
+</div>
+</div>
+<div class="flex gap-4">
+<div class="flex flex-col items-center">
+<div class="w-2 h-2 rounded-full bg-outline-variant mt-2"></div>
+</div>
+<div>
+<p class="text-label-md">Workflow Initialized</p>
+<p class="text-label-sm text-on-surface-variant">Oct 24, 2024 • 14:25:00</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Drawer Footer Actions -->
+<div class="p-6 border-t border-outline-variant bg-surface-container-lowest flex gap-3">
+<button class="flex-1 py-2.5 px-4 bg-primary text-on-primary rounded font-label-md hover:opacity-90 transition-all">Edit Content</button>
+<button class="py-2.5 px-4 bg-surface border border-outline-variant rounded font-label-md hover:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined align-middle mr-1" data-icon="content_copy">content_copy</span> Duplicate
+      </button>
+</div>
+</div>
+<!-- Background Overlay when Drawer Open -->
+<div class="fixed inset-0 bg-black/20 z-40 hidden backdrop-blur-[2px]" id="drawerOverlay" onclick="toggleDrawer(false)"></div>
+<script>
+    function toggleDrawer(open) {
+      const drawer = document.getElementById('detailDrawer');
+      const overlay = document.getElementById('drawerOverlay');
+      if (open) {
+        drawer.classList.remove('drawer-closed');
+        drawer.classList.add('drawer-open');
+        overlay.classList.remove('hidden');
+      } else {
+        drawer.classList.remove('drawer-open');
+        drawer.classList.add('drawer-closed');
+        overlay.classList.add('hidden');
+      }
+    }
+
+    // Interactive Hover Effect for table rows
+    document.querySelectorAll('tbody tr').forEach(row => {
+      row.addEventListener('mouseenter', () => {
+        // Subtle atmospheric interaction logic could go here
+      });
+    });
+  </script>
+</body></html>

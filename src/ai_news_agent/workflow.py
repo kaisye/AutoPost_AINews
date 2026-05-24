@@ -10,7 +10,7 @@ from ai_news_agent.config import Settings
 from ai_news_agent.facebook import FacebookPublisher
 from ai_news_agent.llm import PostWriter
 from ai_news_agent.memory import AgentMemory
-from ai_news_agent.models import ApprovalResult, ApprovalStatus, Article, FacebookDraft
+from ai_news_agent.models import ApprovalResult, ApprovalStatus, Article, ContentItem, ContentStatus, FacebookDraft
 from ai_news_agent.news import NewsCollector
 from ai_news_agent.telegram import TelegramApprovalClient
 
@@ -192,6 +192,25 @@ class AINewsWorkflow:
                 articles=articles,
                 approval=approval,
                 facebook_post_id=state.get("facebook_post_id"),
+            )
+            draft = FacebookDraft.model_validate(state["draft"])
+            content_status = (
+                ContentStatus.PUBLISHED
+                if state.get("facebook_post_id")
+                else ContentStatus.APPROVED
+                if approval.status == ApprovalStatus.APPROVED
+                else ContentStatus.FAILED
+                if approval.status in {ApprovalStatus.REJECTED, ApprovalStatus.SKIPPED_DUPLICATE}
+                else ContentStatus.WAITING_APPROVAL
+            )
+            title = articles[0].title if articles else "AI News Post"
+            self.memory.create_content_item(
+                ContentItem.from_draft(title=title, draft=draft, workflow_id="ai-news").model_copy(
+                    update={
+                        "status": content_status,
+                        "facebook_post_id": state.get("facebook_post_id"),
+                    }
+                )
             )
         logger.info("Run memory persisted.")
         return state

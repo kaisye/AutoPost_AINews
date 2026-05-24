@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AutoPost AI - Dashboard Overview</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-tertiary-container": "#98805d",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "on-error-container": "#93000a",
+                      "surface-dim": "#d8dadc",
+                      "on-background": "#191c1e",
+                      "primary-fixed-dim": "#bec6e0",
+                      "on-error": "#ffffff",
+                      "on-secondary-container": "#54647a",
+                      "surface-container": "#eceef0",
+                      "error-container": "#ffdad6",
+                      "on-primary-fixed": "#131b2e",
+                      "primary": "#000000",
+                      "secondary": "#505f76",
+                      "surface-container-low": "#f2f4f6",
+                      "on-primary-fixed-variant": "#3f465c",
+                      "tertiary-container": "#271901",
+                      "tertiary-fixed": "#fcdeb5",
+                      "secondary-fixed": "#d3e4fe",
+                      "secondary-container": "#d0e1fb",
+                      "on-tertiary-fixed-variant": "#574425",
+                      "outline": "#76777d",
+                      "secondary-fixed-dim": "#b7c8e1",
+                      "error": "#ba1a1a",
+                      "inverse-surface": "#2d3133",
+                      "on-primary-container": "#7c839b",
+                      "on-primary": "#ffffff",
+                      "background": "#f7f9fb",
+                      "outline-variant": "#c6c6cd",
+                      "on-secondary-fixed-variant": "#38485d",
+                      "surface-bright": "#f7f9fb",
+                      "on-surface": "#191c1e",
+                      "surface-variant": "#e0e3e5",
+                      "inverse-primary": "#bec6e0",
+                      "surface-container-high": "#e6e8ea",
+                      "tertiary-fixed-dim": "#dec29a",
+                      "on-secondary-fixed": "#0b1c30",
+                      "surface-container-highest": "#e0e3e5",
+                      "tertiary": "#000000",
+                      "surface-tint": "#565e74",
+                      "on-surface-variant": "#45464d",
+                      "primary-fixed": "#dae2fd",
+                      "surface-container-lowest": "#ffffff",
+                      "inverse-on-surface": "#eff1f3",
+                      "primary-container": "#131b2e",
+                      "surface": "#f7f9fb",
+                      "on-tertiary-fixed": "#271901"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.125rem",
+                      "lg": "0.25rem",
+                      "xl": "0.5rem",
+                      "full": "0.75rem"
+              },
+              "spacing": {
+                      "margin_desktop": "32px",
+                      "stack_sm": "8px",
+                      "container_max_width": "1280px",
+                      "margin_mobile": "16px",
+                      "stack_lg": "24px",
+                      "gutter": "24px",
+                      "stack_md": "16px",
+                      "sidebar_width": "240px"
+              },
+              "fontFamily": {
+                      "label-md": ["Inter"],
+                      "body-md": ["Inter"],
+                      "headline-lg": ["Inter"],
+                      "display": ["Inter"],
+                      "body-lg": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "code": ["jetbrainsMono"],
+                      "headline-md": ["Inter"]
+              },
+              "fontSize": {
+                      "label-md": ["13px", {"lineHeight": "18px", "fontWeight": "500"}],
+                      "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-lg": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600"}],
+                      "display": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                      "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                      "code": ["13px", {"lineHeight": "20px", "fontWeight": "400"}],
+                      "headline-md": ["20px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+      </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 20;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #f7f9fb; }
+    </style>
+</head>
+<body class="text-on-surface">
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-0 h-screen w-[240px] z-40 bg-surface border-r border-outline-variant flex flex-col gap-1 p-4">
+<div class="mb-8 px-2 flex flex-col gap-1">
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface">AutoPost AI</h1>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Automation Hub</p>
+</div>
+<nav class="flex flex-col gap-1 flex-grow">
+<!-- Active State Logic: Overview is current page -->
+<a class="bg-surface-container-high text-on-surface font-semibold flex items-center gap-3 px-3 py-2.5 rounded transition-colors duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-body-md text-body-md">Overview</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-low flex items-center gap-3 px-3 py-2.5 rounded transition-colors duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="auto_awesome">auto_awesome</span>
+<span class="font-body-md text-body-md">Content Studio</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-low flex items-center gap-3 px-3 py-2.5 rounded transition-colors duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="library_books">library_books</span>
+<span class="font-body-md text-body-md">Content Library</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-low flex items-center gap-3 px-3 py-2.5 rounded transition-colors duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-body-md text-body-md">Schedule</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-low flex items-center gap-3 px-3 py-2.5 rounded transition-colors duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="account_tree">account_tree</span>
+<span class="font-body-md text-body-md">Workflows</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-low flex items-center gap-3 px-3 py-2.5 rounded transition-colors duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="newspaper">newspaper</span>
+<span class="font-body-md text-body-md">AI News</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-low flex items-center gap-3 px-3 py-2.5 rounded transition-colors duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-body-md text-body-md">Run History</span>
+</a>
+</nav>
+<div class="mt-auto pt-4 border-t border-outline-variant">
+<a class="text-on-surface-variant hover:bg-surface-container-low flex items-center gap-3 px-3 py-2.5 rounded transition-colors duration-150" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+<div class="mt-4 flex items-center gap-3 px-3 py-2">
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-container" style="font-variation-settings: 'opsz' 18;">person</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface">Alex Rivera</span>
+<span class="text-[10px] text-outline">Pro Plan</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 right-0 left-[240px] h-16 z-30 bg-surface border-b border-outline-variant flex justify-between items-center px-6">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border-none rounded-lg pl-10 pr-4 py-2 font-body-md text-body-md focus:ring-1 focus:ring-primary" placeholder="Search operations, news, or drafts..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-4 py-2 bg-surface text-on-surface border border-outline-variant rounded font-label-md text-label-md hover:bg-surface-container transition-colors active:scale-95">Run Now</button>
+<button class="px-4 py-2 bg-primary text-on-primary rounded font-label-md text-label-md hover:opacity-90 transition-opacity active:scale-95">Create Content</button>
+<div class="w-px h-6 bg-outline-variant mx-2"></div>
+<div class="flex items-center gap-1">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full">
+<span class="material-symbols-outlined" data-icon="light_mode">light_mode</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full relative">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[240px] pt-16 min-h-screen bg-background">
+<div class="max-w-[1280px] mx-auto p-8 flex flex-col gap-8">
+<!-- Header Section -->
+<div class="flex justify-between items-end">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Operations Dashboard</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Real-time status of your automated news pipeline.</p>
+</div>
+<div class="flex gap-3">
+<button class="flex items-center gap-2 px-4 py-2 bg-surface-container-highest text-on-surface rounded font-label-md text-label-md hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined text-[18px]" data-icon="calendar_month">calendar_month</span>
+                        View Schedule
+                    </button>
+</div>
+</div>
+<!-- Stats Bento Grid -->
+<div class="grid grid-cols-12 gap-6">
+<!-- Status Card (Run Status) -->
+<div class="col-span-12 md:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col gap-4">
+<div class="flex justify-between items-start">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Current Status</span>
+<span class="px-2 py-1 bg-emerald-50 text-emerald-700 text-[11px] font-bold rounded flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span>
+                            ACTIVE
+                        </span>
+</div>
+<div class="flex flex-col gap-1">
+<h3 class="font-display text-display text-on-surface">System Running</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Processing global news feeds via OpenAI GPT-4o.</p>
+</div>
+<div class="mt-2 py-3 border-t border-outline-variant flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-[11px] text-outline font-semibold uppercase">Last Successful Run</span>
+<span class="font-body-md text-body-md">14 minutes ago</span>
+</div>
+<span class="material-symbols-outlined text-outline" data-icon="check_circle">check_circle</span>
+</div>
+</div>
+<!-- Next Run Timer -->
+<div class="col-span-12 md:col-span-4 bg-primary text-on-primary rounded-xl p-6 flex flex-col justify-between relative overflow-hidden">
+<div class="relative z-10">
+<span class="font-label-sm text-label-sm text-on-primary-container uppercase tracking-wider">Next AI News Run</span>
+<div class="mt-4 flex flex-col">
+<span class="font-display text-[48px] leading-tight font-bold tracking-tight" id="countdown">22:04:18</span>
+<p class="font-body-md text-body-md opacity-80 mt-1">Next automated scrape and post-generation.</p>
+</div>
+</div>
+<div class="relative z-10 mt-6">
+<button class="w-full py-2.5 bg-white/10 hover:bg-white/20 transition-colors border border-white/20 rounded font-label-md text-label-md">
+                            Run AI News Now
+                        </button>
+</div>
+<!-- Decorative element -->
+<div class="absolute -right-8 -bottom-8 w-40 h-40 bg-white/5 rounded-full blur-3xl"></div>
+</div>
+<!-- Fast Metrics Stack -->
+<div class="col-span-12 md:col-span-4 grid grid-cols-2 gap-4">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-outline uppercase">Scheduled</span>
+<span class="font-headline-lg text-headline-lg mt-2">12</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-outline uppercase">Drafts</span>
+<span class="font-headline-lg text-headline-lg mt-2">48</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-outline uppercase">Published</span>
+<span class="font-headline-lg text-headline-lg mt-2">1.2k</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col justify-between">
+<span class="font-label-sm text-label-sm text-error uppercase">Failed Jobs</span>
+<span class="font-headline-lg text-headline-lg mt-2 text-error">3</span>
+</div>
+</div>
+</div>
+<!-- Content Row -->
+<div class="grid grid-cols-12 gap-6 items-start">
+<!-- Recent Content Feed -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-4">
+<div class="flex items-center justify-between px-2">
+<h3 class="font-headline-md text-headline-md">Current Workspace</h3>
+<a class="text-primary font-label-md text-label-md hover:underline" href="#">View All Library</a>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container font-label-sm text-label-sm text-on-surface-variant uppercase">
+<tr>
+<th class="px-6 py-4 font-semibold">Content Source</th>
+<th class="px-6 py-4 font-semibold">Status</th>
+<th class="px-6 py-4 font-semibold">Platform</th>
+<th class="px-6 py-4 font-semibold text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md">
+<tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-surface-variant overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A clean, high-tech macro photography shot of a microchip glowing with soft blue fiber optic light, set against a dark brushed metal background in a professional light-mode UI style. The image represents cutting-edge technology and news data processing, feeling sharp, precise, and reliable." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHeWF5byRuGju36L_g4a-ufBDf2XnTt7Dr_sIKBPStpso27vdqRyaP4j18UXYviJfxoirAOVL21EEH47WansYgK1kL0qJg-nYe0JSmlaFEQu0mqafP6utY6sCn2tZYSy0p34HrQ6udKAk9piVAYRnH2tybfiih1L_EoupaBM9enHvxG5s6FEwoMtJBorLq3YsxGfX1TNb9-PW0_Tr01YHA5Ilpp43V6SCCC7jSKPK0glrkgi5RNeVa4TyzcefGydk1vGhLqYqj7YO0"/>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Quantum Computing Breakthrough</span>
+<span class="text-[12px] text-outline">Generated from TechCrunch RSS</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-2 py-0.5 bg-secondary-fixed text-on-secondary-fixed-variant text-[11px] font-bold rounded uppercase">Drafting</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]" data-icon="share">share</span>
+<span>X, LinkedIn</span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="p-2 hover:bg-surface-container-high rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined" data-icon="edit">edit</span>
+</button>
+</td>
+</tr>
+<tr class="border-b border-outline-variant hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-surface-variant overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="An abstract visualization of digital information flowing like streams of light through a minimalist white space. The lighting is bright and airy, consistent with a professional productivity dashboard aesthetic. Soft shadows and a refined color palette of blacks, whites, and subtle grey tones create a sense of organized complexity." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBGHxbmuhRLaFD995dmzuFsHNkNu1M5fRNPLd0qRhdNrwCL2blTwqKAQNT4yOLERhcaaw4Z38qzF0ZrvdVlGmv_lrq62Gxwmojjb8kYbyGzMOwrFqSaXVPLtODpA_0ar0geA-vKdzoctBNRdlGH-o16979WULkjeTaLyp_wN_i14RBB3k3QGm8fWB-ihVfq5Yt_OVaS3eAjbosle-eN8wafn0PsGF60ly9uX2xfZLamr8DO9MS3RRv-21S3Zh30wLcYbdWRUDsJIT4E"/>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface">Global Market Shift Report</span>
+<span class="text-[12px] text-outline">Scheduled: Tomorrow 09:00</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-2 py-0.5 bg-tertiary-fixed text-on-tertiary-fixed-variant text-[11px] font-bold rounded uppercase">Scheduled</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]" data-icon="public">public</span>
+<span>Substack</span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="p-2 hover:bg-surface-container-high rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors group">
+<td class="px-6 py-5">
+<div class="flex items-center gap-4">
+<div class="w-10 h-10 rounded bg-surface-variant overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="A clean, minimalist satellite view of Earth at night with glowing connection lines between major cities, rendered in a crisp digital style with high-key lighting. The style is professional and corporate, using a palette of white and slate grey to match a modern media operations dashboard. The mood is global and connected." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi95AX0UCYS8D8veSFLv9ZeTHuVumrZ3OjrNUaD2wIVk5laQqtdpKTejNEfldMocFyetu_d-7kgOW_lhI9mq8kSIrWAiq_VVWnUdbGcMGPlR6BjgU6Hi6Um1zKu__iPafw2DydbYPan7AM2helGsXxefF9qHsBamEcLT4HbCBh9jmTJn0vbx2hISIreGM-MZbjXTWj8Uqzh_o7S6j4iYi6hqtZqecjwaolL4XlNcvtNsjCigHji3wwLwTx5QBgfVime8tFIeDYutNX"/>
+</div>
+<div class="flex flex-col">
+<span class="font-semibold text-on-surface text-error">AI Ethics Board Update</span>
+<span class="text-[12px] text-error opacity-70">Source API Connection Failed</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-2 py-0.5 bg-error-container text-on-error-container text-[11px] font-bold rounded uppercase">Failed</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px]" data-icon="error_outline">error_outline</span>
+<span>N/A</span>
+</div>
+</td>
+<td class="px-6 py-5 text-right">
+<button class="p-2 hover:bg-surface-container-high rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-symbols-outlined text-primary" data-icon="refresh">refresh</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Activity Feed -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-4">
+<div class="flex items-center justify-between px-2">
+<h3 class="font-headline-md text-headline-md">Activity</h3>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col gap-6">
+<div class="flex gap-4 relative">
+<div class="absolute left-4 top-8 bottom-[-24px] w-px bg-outline-variant"></div>
+<div class="w-8 h-8 rounded-full bg-secondary-container flex items-center justify-center relative z-10 shrink-0">
+<span class="material-symbols-outlined text-on-secondary-container text-[16px]" data-icon="description">description</span>
+</div>
+<div class="flex flex-col gap-1">
+<p class="font-body-md text-body-md"><span class="font-semibold">Draft Created:</span> "Future of Web3" draft was auto-generated.</p>
+<span class="text-[11px] text-outline font-medium">14 minutes ago</span>
+</div>
+</div>
+<div class="flex gap-4 relative">
+<div class="absolute left-4 top-8 bottom-[-24px] w-px bg-outline-variant"></div>
+<div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center relative z-10 shrink-0">
+<span class="material-symbols-outlined text-on-surface text-[16px]" data-icon="person">person</span>
+</div>
+<div class="flex flex-col gap-1">
+<p class="font-body-md text-body-md"><span class="font-semibold">Approval Sent:</span> To <span class="text-primary font-medium">Sarah Chen</span> for publication.</p>
+<span class="text-[11px] text-outline font-medium">1 hour ago</span>
+</div>
+</div>
+<div class="flex gap-4 relative">
+<div class="absolute left-4 top-8 bottom-[-24px] w-px bg-outline-variant"></div>
+<div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center relative z-10 shrink-0">
+<span class="material-symbols-outlined text-emerald-700 text-[16px]" data-icon="publish">publish</span>
+</div>
+<div class="flex flex-col gap-1">
+<p class="font-body-md text-body-md"><span class="font-semibold">Post Published:</span> "Weekly AI Roundup" is now live on LinkedIn.</p>
+<span class="text-[11px] text-outline font-medium">3 hours ago</span>
+</div>
+</div>
+<div class="flex gap-4 relative">
+<div class="w-8 h-8 rounded-full bg-error-container flex items-center justify-center relative z-10 shrink-0">
+<span class="material-symbols-outlined text-error text-[16px]" data-icon="warning">warning</span>
+</div>
+<div class="flex flex-col gap-1">
+<p class="font-body-md text-body-md"><span class="font-semibold text-error">System Error:</span> API timeout on Reuters news feed.</p>
+<span class="text-[11px] text-outline font-medium">5 hours ago</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<script>
+        // Simple micro-interaction for the countdown timer
+        function updateTimer() {
+            const timerElement = document.getElementById('countdown');
+            if (!timerElement) return;
+
+            let time = timerElement.innerText.split(':');
+            let hours = parseInt(time[0]);
+            let minutes = parseInt(time[1]);
+            let seconds = parseInt(time[2]);
+
+            seconds--;
+            if (seconds < 0) {
+                seconds = 59;
+                minutes--;
+                if (minutes < 0) {
+                    minutes = 59;
+                    hours--;
+                    if (hours < 0) hours = 23;
+                }
+            }
+
+            timerElement.innerText = 
+                (hours < 10 ? '0' + hours : hours) + ':' + 
+                (minutes < 10 ? '0' + minutes : minutes) + ':' + 
+                (seconds < 10 ? '0' + seconds : seconds);
+        }
+
+        setInterval(updateTimer, 1000);
+
+        // Simple scale effect on buttons for feedback
+        document.querySelectorAll('button').forEach(btn => {
+            btn.addEventListener('mousedown', () => {
+                btn.style.transform = 'scale(0.97)';
+            });
+            btn.addEventListener('mouseup', () => {
+                btn.style.transform = 'scale(1)';
+            });
+            btn.addEventListener('mouseleave', () => {
+                btn.style.transform = 'scale(1)';
+            });
+        });
+    </script>
+</body></html>

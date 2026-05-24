@@ -42,6 +42,12 @@ class Settings(BaseSettings):
     facebook_enabled: bool = Field(False, alias="FACEBOOK_ENABLED")
     facebook_page_id: str | None = Field(None, alias="FACEBOOK_PAGE_ID")
     facebook_page_access_token: str | None = Field(None, alias="FACEBOOK_PAGE_ACCESS_TOKEN")
+    youtube_enabled: bool = Field(False, alias="YOUTUBE_ENABLED")
+    youtube_client_id: str | None = Field(None, alias="YOUTUBE_CLIENT_ID")
+    youtube_client_secret: str | None = Field(None, alias="YOUTUBE_CLIENT_SECRET")
+    youtube_refresh_token: str | None = Field(None, alias="YOUTUBE_REFRESH_TOKEN")
+    youtube_privacy_status: str = Field("private", alias="YOUTUBE_PRIVACY_STATUS")
+    youtube_category_id: str = Field("28", alias="YOUTUBE_CATEGORY_ID")
 
     run_mode: str = Field("once", alias="RUN_MODE")
     schedule_mode: str = Field("cron", alias="SCHEDULE_MODE")
@@ -87,6 +93,9 @@ class Settings(BaseSettings):
             total_minutes = self.schedule_interval_hours * 60 + self.schedule_interval_minutes
             if total_minutes <= 0:
                 raise ValueError("Interval schedule requires SCHEDULE_INTERVAL_HOURS or SCHEDULE_INTERVAL_MINUTES")
+        self.youtube_privacy_status = self.youtube_privacy_status.strip().lower()
+        if self.youtube_privacy_status not in {"private", "unlisted", "public"}:
+            raise ValueError("YOUTUBE_PRIVACY_STATUS must be private, unlisted, or public")
         return self
 
     @property

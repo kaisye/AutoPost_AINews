@@ -4,18 +4,22 @@ import argparse
 import json
 import logging
 import uuid
+from zoneinfo import ZoneInfo
 
 from openai import OpenAIError
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
+from dateutil import parser as date_parser
 from pydantic import ValidationError
 
 from ai_news_agent.config import get_settings
 from ai_news_agent.facebook import FacebookPublisher
 from ai_news_agent.llm import PostWriter, explain_openai_error
 from ai_news_agent.memory import AgentMemory
+from ai_news_agent.platform import MediaPlatform
 from ai_news_agent.workflow import AINewsWorkflow
+from ai_news_agent.workflows import WORKFLOW_TEMPLATES
 
 
 def configure_logging(level: str) -> None:
@@ -25,9 +29,11 @@ def configure_logging(level: str) -> None:
     )
 
 
-def run_once() -> None:
+def run_once(workflow_id: str = "ai-news") -> None:
     settings = get_settings()
     configure_logging(settings.log_level)
+    if workflow_id != "ai-news":
+        raise SystemExit("Only the ai-news workflow can be executed by run-once in this MVP.")
     workflow = AINewsWorkflow(settings)
     run_id = f"ai-news-{uuid.uuid4()}"
     try:
@@ -45,6 +51,7 @@ def run_daemon() -> None:
     scheduler = BlockingScheduler()
     trigger = schedule_trigger(settings)
     scheduler.add_job(run_once, trigger=trigger, id="ai-news-agent", replace_existing=True)
+    scheduler.add_job(run_due_content, "interval", minutes=1, id="media-platform-due-content", replace_existing=True)
     logging.getLogger(__name__).info("Scheduler started with %s schedule: %s", settings.schedule_mode, trigger)
     scheduler.start()
 
@@ -100,14 +107,54 @@ def repost(post_id: int, rewrite_instruction: str | None = None) -> None:
     logging.getLogger(__name__).info("Reposted post #%s to Facebook id=%s", post_id, facebook_post_id)
 
 
+def run_due_content() -> None:
+    settings = get_settings()
+    processed = MediaPlatform(settings).run_due_schedule_jobs()
+    if processed:
+        logging.getLogger(__name__).info("Published %s due scheduled content item(s).", processed)
+
+
+def publish_content(content_id: int) -> None:
+    settings = get_settings()
+    configure_logging(settings.log_level)
+    platform_post_id = MediaPlatform(settings).publish_content(content_id)
+    logging.getLogger(__name__).info("Published content #%s to platform id=%s", content_id, platform_post_id)
+
+
+def schedule_content(content_id: int, run_at: str, workflow_id: str) -> None:
+    settings = get_settings()
+    configure_logging(settings.log_level)
+    parsed_run_at = date_parser.parse(run_at)
+    if parsed_run_at.tzinfo is None:
+        parsed_run_at = parsed_run_at.replace(tzinfo=ZoneInfo("Asia/Saigon"))
+    job_id = MediaPlatform(settings).schedule_content(content_id, parsed_run_at, workflow_id=workflow_id)
+    logging.getLogger(__name__).info("Scheduled content #%s as job #%s at %s", content_id, job_id, parsed_run_at)
+
+
+def list_workflows() -> None:
+    for template in WORKFLOW_TEMPLATES.values():
+        print(f"{template.id}: {template.name}")
+        print(f"  {template.description}")
+        print(f"  nodes: {', '.join(template.nodes)}")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="AI news LangGraph agent")
     subparsers = parser.add_subparsers(dest="command")
-    subparsers.add_parser("run-once", help="Run the workflow once")
+    run_once_parser = subparsers.add_parser("run-once", help="Run the workflow once")
+    run_once_parser.add_argument("--workflow", default="ai-news", help="Workflow id to run")
     subparsers.add_parser("daemon", help="Run the scheduled automation")
     repost_parser = subparsers.add_parser("repost", help="Repost a stored memory post to Facebook")
     repost_parser.add_argument("--post-id", required=True, type=int)
     repost_parser.add_argument("--rewrite", help="Rewrite instruction before reposting")
+    schedule_parser = subparsers.add_parser("schedule", help="Schedule a stored content item")
+    schedule_parser.add_argument("--content-id", required=True, type=int)
+    schedule_parser.add_argument("--run-at", required=True, help='Run time, e.g. "2026-05-25 09:00"')
+    schedule_parser.add_argument("--workflow", default="scheduled-media-post")
+    publish_parser = subparsers.add_parser("publish", help="Publish a stored content item immediately")
+    publish_parser.add_argument("--content-id", required=True, type=int)
+    workflow_parser = subparsers.add_parser("workflow", help="Inspect workflow templates")
+    workflow_parser.add_argument("action", choices=["list"])
     ui_parser = subparsers.add_parser("ui", help="Run the local admin UI")
     ui_parser.add_argument("--host", default="127.0.0.1")
     ui_parser.add_argument("--port", default=8787, type=int)
@@ -120,8 +167,14 @@ def main() -> None:
             run_daemon()
         elif args.command == "repost":
             repost(args.post_id, args.rewrite)
+        elif args.command == "schedule":
+            schedule_content(args.content_id, args.run_at, args.workflow)
+        elif args.command == "publish":
+            publish_content(args.content_id)
+        elif args.command == "workflow":
+            list_workflows()
         else:
-            run_once()
+            run_once(getattr(args, "workflow", "ai-news"))
     except ValidationError as exc:
         print("Configuration error. Please update .env before running.")
         for error in exc.errors():

@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AutoPost AI - Run History</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-tertiary-container": "#98805d",
+                        "on-tertiary": "#ffffff",
+                        "on-secondary": "#ffffff",
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#d8dadc",
+                        "on-background": "#191c1e",
+                        "primary-fixed-dim": "#bec6e0",
+                        "on-error": "#ffffff",
+                        "on-secondary-container": "#54647a",
+                        "surface-container": "#eceef0",
+                        "error-container": "#ffdad6",
+                        "on-primary-fixed": "#131b2e",
+                        "primary": "#000000",
+                        "secondary": "#505f76",
+                        "surface-container-low": "#f2f4f6",
+                        "on-primary-fixed-variant": "#3f465c",
+                        "tertiary-container": "#271901",
+                        "tertiary-fixed": "#fcdeb5",
+                        "secondary-fixed": "#d3e4fe",
+                        "secondary-container": "#d0e1fb",
+                        "on-tertiary-fixed-variant": "#574425",
+                        "outline": "#76777d",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "error": "#ba1a1a",
+                        "inverse-surface": "#2d3133",
+                        "on-primary-container": "#7c839b",
+                        "on-primary": "#ffffff",
+                        "background": "#f7f9fb",
+                        "outline-variant": "#c6c6cd",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "surface-bright": "#f7f9fb",
+                        "on-surface": "#191c1e",
+                        "surface-variant": "#e0e3e5",
+                        "inverse-primary": "#bec6e0",
+                        "surface-container-high": "#e6e8ea",
+                        "tertiary-fixed-dim": "#dec29a",
+                        "on-secondary-fixed": "#0b1c30",
+                        "surface-container-highest": "#e0e3e5",
+                        "tertiary": "#000000",
+                        "surface-tint": "#565e74",
+                        "on-surface-variant": "#45464d",
+                        "primary-fixed": "#dae2fd",
+                        "surface-container-lowest": "#ffffff",
+                        "inverse-on-surface": "#eff1f3",
+                        "primary-container": "#131b2e",
+                        "surface": "#f7f9fb",
+                        "on-tertiary-fixed": "#271901"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin_desktop": "32px",
+                        "stack_sm": "8px",
+                        "container_max_width": "1280px",
+                        "margin_mobile": "16px",
+                        "stack_lg": "24px",
+                        "gutter": "24px",
+                        "stack_md": "16px",
+                        "sidebar_width": "240px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"],
+                        "code": ["JetBrains Mono"],
+                        "headline-md": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["13px", { "lineHeight": "18px", "fontWeight": "500" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+                        "display": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "code": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "600" }]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #f7f9fb;
+            color: #191c1e;
+            font-family: 'Inter', sans-serif;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+            vertical-align: middle;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #e2e8f0;
+            border-radius: 10px;
+        }
+        .run-row:hover {
+            background-color: #f1f5f9;
+        }
+    </style>
+</head>
+<body class="overflow-hidden">
+<!-- Sidebar -->
+<aside class="fixed left-0 top-0 h-screen w-[240px] z-40 bg-surface border-r border-outline-variant flex flex-col gap-1 p-4 h-full">
+<div class="mb-8 px-2">
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface">AutoPost AI</h1>
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider">Automation Hub</p>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-3 px-3 py-2 rounded font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">dashboard</span> Overview
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">auto_awesome</span> Content Studio
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">library_books</span> Content Library
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">calendar_today</span> Schedule
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">account_tree</span> Workflows
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">newspaper</span> AI News
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded font-body-md text-body-md bg-surface-container-high text-on-surface font-semibold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">history</span> Run History
+            </a>
+<a class="flex items-center gap-3 px-3 py-2 rounded font-body-md text-body-md text-on-surface-variant hover:bg-surface-container-low transition-colors duration-150" href="#">
+<span class="material-symbols-outlined">settings</span> Settings
+            </a>
+</nav>
+<div class="mt-auto pt-4 border-t border-outline-variant flex items-center gap-3 px-2">
+<img alt="User Profile" class="w-8 h-8 rounded-full" data-alt="A professional close-up headshot of a diverse male tech executive with a confident expression. The background is a softly blurred modern office interior with clean lines and natural light. High-end professional photography style, sharp focus on the face, neutral color palette to match a sophisticated SaaS interface." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUiyUOk99WzQa3QrVy1VFhGnbFp0wMpJbU3EP9ZyxnZQo38l0gwd8PzeOc-kSnUkFpHpiXvPaZ2eAVMpu2BtZ1o4lRqDall-pjDol7Edywg7SqNcPnV5Cu95_YzMXJCmvHLalbMUsRJXnh2jJO0AsYIuB7Fk0VGta0mskJmmVl6KbR71UXDxy4NtTyoIXWImczSHf4tkWXMTTaCd0E6TDD2kUMwlRwlPJ4VnYKtiFgMUg0cYn-x52lHBv1WYLslbG3ccDQKpuuLPAj"/>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Alex Rivera</p>
+<p class="font-label-sm text-label-sm text-outline">Pro Admin</p>
+</div>
+</div>
+</aside>
+<!-- Top App Bar -->
+<header class="fixed top-0 right-0 left-[240px] h-16 z-30 bg-surface border-b border-outline-variant flex justify-between items-center px-6 h-full">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg pl-10 pr-4 py-2 font-body-md text-body-md focus:ring-1 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="Search runs, workflows or IDs..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors duration-150">
+<span class="material-symbols-outlined text-on-surface-variant">light_mode</span>
+</button>
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors duration-150 relative">
+<span class="material-symbols-outlined text-on-surface-variant">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+</button>
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors duration-150">
+<span class="material-symbols-outlined text-on-surface-variant">help_outline</span>
+</button>
+<div class="h-6 w-px bg-outline-variant mx-2"></div>
+<button class="flex items-center gap-2 px-4 py-2 bg-primary text-on-primary rounded font-label-md text-label-md hover:opacity-90 active:scale-95 transition-all">
+                Create Content
+            </button>
+</div>
+</header>
+<!-- Main Content -->
+<main class="ml-[240px] mt-16 p-8 bg-background h-[calc(100vh-64px)] overflow-y-auto">
+<div class="max-w-[1280px] mx-auto space-y-8">
+<!-- Page Header -->
+<div class="flex justify-between items-end">
+<div>
+<h2 class="font-display text-display text-on-surface">Run History</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-1">Audit logs for all automated content generation workflows.</p>
+</div>
+<div class="flex gap-2">
+<button class="flex items-center gap-2 px-3 py-2 border border-outline-variant bg-surface rounded font-label-md text-label-md hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-sm">filter_list</span> Filter
+                    </button>
+<button class="flex items-center gap-2 px-3 py-2 border border-outline-variant bg-surface rounded font-label-md text-label-md hover:bg-surface-container-low transition-colors">
+<span class="material-symbols-outlined text-sm">download</span> Export CSV
+                    </button>
+</div>
+</div>
+<!-- Stats Bar (Bento-style items) -->
+<div class="grid grid-cols-4 gap-6">
+<div class="bg-surface border border-outline-variant p-5 rounded">
+<p class="font-label-sm text-label-sm text-outline uppercase">Total Runs (24h)</p>
+<p class="font-display text-display text-on-surface mt-1">1,284</p>
+<div class="mt-2 flex items-center gap-1 text-emerald-600 font-label-sm text-label-sm">
+<span class="material-symbols-outlined">trending_up</span> +12% vs yesterday
+                    </div>
+</div>
+<div class="bg-surface border border-outline-variant p-5 rounded">
+<p class="font-label-sm text-label-sm text-outline uppercase">Success Rate</p>
+<p class="font-display text-display text-on-surface mt-1">99.4%</p>
+<div class="w-full bg-surface-container-low h-1 rounded-full mt-3">
+<div class="bg-emerald-500 h-1 rounded-full w-[99.4%]"></div>
+</div>
+</div>
+<div class="bg-surface border border-outline-variant p-5 rounded">
+<p class="font-label-sm text-label-sm text-outline uppercase">Average Duration</p>
+<p class="font-display text-display text-on-surface mt-1">42s</p>
+<div class="mt-2 text-outline font-label-sm text-label-sm">
+                        Optimized for peak load
+                    </div>
+</div>
+<div class="bg-surface border border-outline-variant p-5 rounded">
+<p class="font-label-sm text-label-sm text-outline uppercase">Pending Approval</p>
+<p class="font-display text-display text-on-surface mt-1">18</p>
+<div class="mt-2 flex items-center gap-1 text-on-tertiary-container font-label-sm text-label-sm">
+<span class="material-symbols-outlined">hourglass_empty</span> Review required
+                    </div>
+</div>
+</div>
+<!-- Data Table Container -->
+<div class="bg-surface border border-outline-variant rounded overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="px-6 py-4 font-label-sm text-label-sm text-outline uppercase tracking-wider">Run ID</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-outline uppercase tracking-wider">Workflow Name</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-outline uppercase tracking-wider">Start Time</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-outline uppercase tracking-wider">Finish Time</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-outline uppercase tracking-wider">Status</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-outline uppercase tracking-wider">Approval</th>
+<th class="px-6 py-4 font-label-sm text-label-sm text-outline uppercase tracking-wider"></th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="run-row group cursor-pointer transition-colors" onclick="openDrawer('run-8821')">
+<td class="px-6 py-4 font-code text-code text-primary font-medium">#run-8821</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface">Tech News Daily Roundup</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">Oct 24, 09:00:02</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">Oct 24, 09:00:45</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-label-sm text-label-sm border border-emerald-100">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">check_circle</span> Success
+                                </span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm border border-outline-variant">
+                                    Approved
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="material-symbols-outlined text-outline opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="run-row group cursor-pointer transition-colors" onclick="openDrawer('run-8819')">
+<td class="px-6 py-4 font-code text-code text-primary font-medium">#run-8819</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface">Financial Market Summary</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">Oct 24, 08:30:10</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">Oct 24, 08:31:22</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-error-container text-on-error-container font-label-sm text-label-sm border border-[#ffdad6]">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">error</span> Failure
+                                </span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm border border-outline-variant opacity-50">
+                                    N/A
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="material-symbols-outlined text-outline opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="run-row group cursor-pointer transition-colors" onclick="openDrawer('run-8815')">
+<td class="px-6 py-4 font-code text-code text-primary font-medium">#run-8815</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface">Weekly Sports Highlights</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">Oct 24, 08:00:00</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">Oct 24, 08:00:58</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-label-sm text-label-sm border border-emerald-100">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">check_circle</span> Success
+                                </span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm border border-on-tertiary-container/20">
+<span class="material-symbols-outlined text-xs">pending</span> Pending
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="material-symbols-outlined text-outline opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</td>
+</tr>
+<!-- Repeat filler rows -->
+<tr class="run-row group cursor-pointer transition-colors" onclick="openDrawer('run-8812')">
+<td class="px-6 py-4 font-code text-code text-primary font-medium">#run-8812</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface">Auto-Digest: Politics</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">Oct 23, 23:45:01</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">Oct 23, 23:46:12</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-label-sm text-label-sm border border-emerald-100">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">check_circle</span> Success
+                                </span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm border border-outline-variant">
+                                    Approved
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="material-symbols-outlined text-outline opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</td>
+</tr>
+<tr class="run-row group cursor-pointer transition-colors" onclick="openDrawer('run-8811')">
+<td class="px-6 py-4 font-code text-code text-primary font-medium">#run-8811</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface">Weather Alerts Global</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">Oct 23, 22:15:30</td>
+<td class="px-6 py-4 font-body-md text-body-md text-on-surface-variant">Oct 23, 22:15:45</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 font-label-sm text-label-sm border border-emerald-100">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">check_circle</span> Success
+                                </span>
+</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm border border-outline-variant">
+                                    Approved
+                                </span>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="material-symbols-outlined text-outline opacity-0 group-hover:opacity-100 transition-opacity">chevron_right</span>
+</td>
+</tr>
+</tbody>
+</table>
+<!-- Pagination -->
+<div class="px-6 py-4 bg-surface border-t border-outline-variant flex items-center justify-between">
+<p class="font-body-md text-body-md text-on-surface-variant">Showing 1 to 5 of 1,284 runs</p>
+<div class="flex gap-2">
+<button class="px-3 py-1.5 border border-outline-variant rounded font-label-md text-label-md hover:bg-surface-container-low disabled:opacity-30" disabled="">Previous</button>
+<button class="px-3 py-1.5 border border-outline-variant rounded font-label-md text-label-md bg-primary text-on-primary">1</button>
+<button class="px-3 py-1.5 border border-outline-variant rounded font-label-md text-label-md hover:bg-surface-container-low">2</button>
+<button class="px-3 py-1.5 border border-outline-variant rounded font-label-md text-label-md hover:bg-surface-container-low">3</button>
+<button class="px-3 py-1.5 border border-outline-variant rounded font-label-md text-label-md hover:bg-surface-container-low">Next</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Details Drawer -->
+<div class="fixed inset-y-0 right-0 w-[560px] bg-surface shadow-2xl z-50 transform translate-x-full transition-transform duration-300 ease-in-out border-l border-outline-variant flex flex-col" id="details-drawer">
+<div class="p-6 border-b border-outline-variant flex justify-between items-center">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface" id="drawer-title">Run #run-8821</h3>
+<p class="font-label-sm text-label-sm text-outline uppercase tracking-wider mt-1">Node Logs &amp; Execution Flow</p>
+</div>
+<button class="p-2 hover:bg-surface-container-low rounded-lg transition-colors" onclick="closeDrawer()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto custom-scrollbar p-6 space-y-6">
+<!-- Summary Info -->
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-low p-4 rounded border border-outline-variant/30">
+<p class="font-label-sm text-label-sm text-outline">Total Duration</p>
+<p class="font-body-md text-body-md text-on-surface font-medium">43.2 seconds</p>
+</div>
+<div class="bg-surface-container-low p-4 rounded border border-outline-variant/30">
+<p class="font-label-sm text-label-sm text-outline">Nodes Triggered</p>
+<p class="font-body-md text-body-md text-on-surface font-medium">6/6 Steps</p>
+</div>
+</div>
+<!-- Node Steps Timeline -->
+<div class="space-y-4">
+<h4 class="font-label-md text-label-md text-on-surface font-bold">Execution Timeline</h4>
+<!-- Step 1 -->
+<div class="relative pl-8 border-l-2 border-emerald-500 pb-6">
+<div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-emerald-500 ring-4 ring-surface"></div>
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-md text-body-md font-semibold text-on-surface">1. RSS Feed Reader</span>
+<span class="font-code text-xs text-outline">0ms - 450ms</span>
+</div>
+<div class="bg-surface-container-highest rounded p-3 font-code text-code text-on-surface-variant overflow-x-auto">
+<p class="text-emerald-600">[INFO] Fetching https://techcrunch.com/feed/</p>
+<p class="mt-1">"output": { "entries": 25, "status": "200 OK" }</p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="relative pl-8 border-l-2 border-emerald-500 pb-6">
+<div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-emerald-500 ring-4 ring-surface"></div>
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-md text-body-md font-semibold text-on-surface">2. Content Filter (LLM)</span>
+<span class="font-code text-xs text-outline">451ms - 12.8s</span>
+</div>
+<div class="bg-surface-container-highest rounded p-3 font-code text-code text-on-surface-variant overflow-x-auto">
+<p class="text-on-primary-container">[PROMPT] Analyze 25 articles for 'AI' relevance...</p>
+<p class="mt-1 text-emerald-600">[SUCCESS] Filtered to 5 high-relevance topics.</p>
+<p class="mt-1">"tokens_used": 1420</p>
+</div>
+</div>
+<!-- Step 3 (Example with Error/Warning if applicable) -->
+<div class="relative pl-8 border-l-2 border-outline-variant pb-6">
+<div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-error ring-4 ring-surface hidden" id="step-error-point"></div>
+<div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-emerald-500 ring-4 ring-surface" id="step-success-point"></div>
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-md text-body-md font-semibold text-on-surface">3. Image Generator (DALL-E)</span>
+<span class="font-code text-xs text-outline">12.9s - 38.4s</span>
+</div>
+<div class="bg-surface-container-highest rounded p-3 font-code text-code text-on-surface-variant overflow-x-auto" id="log-content">
+<p class="text-on-primary-container">[CALL] Generating 5 unique cover images...</p>
+<p class="mt-1 text-emerald-600">[DONE] Image URLs generated and cached.</p>
+<div class="mt-2 grid grid-cols-5 gap-1">
+<div class="h-8 w-8 bg-outline-variant rounded"></div>
+<div class="h-8 w-8 bg-outline-variant rounded"></div>
+<div class="h-8 w-8 bg-outline-variant rounded"></div>
+<div class="h-8 w-8 bg-outline-variant rounded"></div>
+<div class="h-8 w-8 bg-outline-variant rounded"></div>
+</div>
+</div>
+</div>
+<!-- Final Step -->
+<div class="relative pl-8">
+<div class="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-emerald-500 ring-4 ring-surface"></div>
+<div class="flex justify-between items-center mb-2">
+<span class="font-body-md text-body-md font-semibold text-on-surface">4. Social Media Dispatcher</span>
+<span class="font-code text-xs text-outline">38.5s - 43.2s</span>
+</div>
+<div class="bg-surface-container-highest rounded p-3 font-code text-code text-on-surface-variant">
+<p class="text-on-primary-container">[QUEUE] Sending to Twitter/X, LinkedIn...</p>
+<p class="mt-1 text-emerald-600">[SUCCESS] Published 5 posts.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="p-6 border-t border-outline-variant bg-surface-container-low flex gap-3">
+<button class="flex-1 px-4 py-2 border border-outline-variant bg-surface rounded font-label-md text-label-md hover:bg-surface-container-high transition-colors">Re-run Step 3</button>
+<button class="flex-1 px-4 py-2 bg-primary text-on-primary rounded font-label-md text-label-md hover:opacity-90 transition-opacity">Approve Run</button>
+</div>
+</div>
+<!-- Backdrop for Drawer -->
+<div class="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 opacity-0 pointer-events-none transition-opacity duration-300" id="drawer-backdrop" onclick="closeDrawer()"></div>
+<script>
+        function openDrawer(runId) {
+            const drawer = document.getElementById('details-drawer');
+            const backdrop = document.getElementById('drawer-backdrop');
+            const title = document.getElementById('drawer-title');
+            const logContent = document.getElementById('log-content');
+            const errorPoint = document.getElementById('step-error-point');
+            const successPoint = document.getElementById('step-success-point');
+
+            title.innerText = `Run ${runId}`;
+            
+            // Artificial logic to show failure UI if it's the failure row
+            if (runId === 'run-8819') {
+                logContent.innerHTML = `<p class="text-error">[ERROR] OpenAI API rate limit exceeded.</p><p class="mt-1 text-outline">"retry_after": "3600s", "code": 429</p>`;
+                errorPoint.classList.remove('hidden');
+                successPoint.classList.add('hidden');
+            } else {
+                logContent.innerHTML = `<p class="text-on-primary-container">[CALL] Generating 5 unique cover images...</p><p class="mt-1 text-emerald-600">[DONE] Image URLs generated and cached.</p>`;
+                errorPoint.classList.add('hidden');
+                successPoint.classList.remove('hidden');
+            }
+
+            drawer.classList.remove('translate-x-full');
+            backdrop.classList.remove('pointer-events-none');
+            backdrop.classList.add('opacity-100');
+        }
+
+        function closeDrawer() {
+            const drawer = document.getElementById('details-drawer');
+            const backdrop = document.getElementById('drawer-backdrop');
+
+            drawer.classList.add('translate-x-full');
+            backdrop.classList.add('pointer-events-none');
+            backdrop.classList.remove('opacity-100');
+        }
+    </script>
+</body></html>
