@@ -40,6 +40,9 @@ The Admin UI includes:
 - `Schedule Calendar`: schedule existing content items and view queued jobs.
 - `Content Library`: review draft, scheduled, and published content items.
 
+  <img width="2552" height="1266" alt="image" src="https://github.com/user-attachments/assets/9e594f1f-e70f-45ac-b867-66f6187e9143" />
+
+
 ## Default LLM Provider
 
 The default configuration uses NVIDIA NIM through an OpenAI-compatible API:
@@ -56,6 +59,8 @@ You can switch back to OpenAI native mode by setting:
 - `OPENAI_MODEL`
 
 Note: `openai/gpt-oss-120b` is a text model. It does not generate images directly. The current workflow uses image metadata from source articles when available.
+
+<img width="2536" height="1268" alt="image" src="https://github.com/user-attachments/assets/51e7ac2a-83be-4eea-81e7-7aab618f0ac1" />
 
 ## Architecture
 
